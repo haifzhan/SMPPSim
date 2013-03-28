@@ -1,0 +1,59 @@
+<project name="SMPPSim2" default="jar" basedir=".">
+    <description>
+        Build file for the SMPPSim2 project
+    </description>
+  <!-- set global properties for this build -->
+  <property name="root" location="."/>
+  <property name="src" location="src"/>
+  <property name="conf" location="conf"/>
+  <property name="classes" location="classes"/>
+  <property name="lib" location="lib"/>
+  <property name="classpath" location="${classes};${lib}\jakarta-regexp-1.2.jar;${lib}\smpp.jar;${lib}\junit.jar"/>
+
+  <target name="init">
+    <!-- Create the time stamp -->
+    <tstamp/>
+    <!-- Create the build directory structure used by compile -->
+  </target>
+
+  <target name="compile" depends="init"
+        description="Compile the project" >
+      <!-- Compile the java code from ${src} into ${build} -->
+      <javac srcdir="${src}" destdir="${classes}" classpath="${classpath}">
+  			<compilerarg value="-Xlint:unchecked"/>
+	  </javac>
+  </target>
+	
+  <target name="jar" depends="compile">
+  <jar destfile="smppsim.jar" manifest="${src}/java/manifest.txt" basedir="${classes}">
+    <manifest>
+      <attribute name="Main-Class" value="com/seleniumsoftware/SMPPSim/SMPPSim"/>
+    </manifest>
+  </jar>
+  </target>
+	
+  <target name="javadoc">
+      <javadoc packagenames="com.seleniumsoftware.SMPPSim.*,tests.*"
+               sourcepath="${src}/java"
+               classpath="${classpath}"
+               overview="${docs}/javadoc-input/overview.html"
+               destdir="docs/javadoc"
+               author="true"
+               version="true"
+               use="true"
+               windowtitle="SMPPSim">
+        <doctitle><![CDATA[<h1>SMPPSim</h1>]]></doctitle>
+        <bottom><![CDATA[<i>Copyright &#169; 2005 Selenium Software Ltd. All Rights Reserved.</i>]]></bottom>
+      </javadoc>
+  </target>
+	
+
+  <target name="clean"
+        description="clean up" >
+      <delete>
+        <fileset dir="${classes}" includes="**/*.class"/>
+      </delete>
+      <delete dir="${dist}"/>
+  </target>
+
+</project>

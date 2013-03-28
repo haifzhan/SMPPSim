@@ -1,0 +1,7 @@
+2013.03.27 09:23:41 735 INFO    10 StandardConnectionHandler waiting for connection
+2013.03.27 09:23:41 747 INFO    13 Starting Lifecycle Service (OutboundQueue)
+2013.03.27 09:23:41 746 INFO    11 Starting HttpHandler thread. Listening on port 88 for conections
+2013.03.27 09:23:41 746 INFO    12 Starting InboundQueue service....
+2013.03.27 09:23:41 757 INFO    12 InboundQueue: Empty  - waiting
+2013.03.27 09:23:41 757 INFO    13 Lifecycle Service: OutboundQueue is Empty  - waiting
+2013.03.27 09:23:41 758 INFO    14 Starting DelayedInboundQueue service....
