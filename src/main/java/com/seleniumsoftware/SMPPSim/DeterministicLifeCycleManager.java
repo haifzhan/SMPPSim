@@ -28,18 +28,20 @@
 package com.seleniumsoftware.SMPPSim;
 
 import com.seleniumsoftware.SMPPSim.pdu.*;
+import org.slf4j.Logger;
 
-import java.util.logging.*;
+import org.slf4j.LoggerFactory;
 
 public class DeterministicLifeCycleManager extends LifeCycleManager {
 
-	private static Logger logger = Logger.getLogger("com.seleniumsoftware.smppsim");
+    private static Logger logger = LoggerFactory.getLogger(DeterministicLifeCycleManager.class);
+//	private static Logger logger = Logger.getLogger("com.seleniumsoftware.smppsim");
 	private Smsc smsc = Smsc.getInstance();
 	private int discardThreshold;
 
 	public DeterministicLifeCycleManager() {
 		discardThreshold = SMPPSim.getDiscardFromQueueAfter();
-		logger.finest("discardThreshold=" + discardThreshold);
+		logger.debug("discardThreshold=" + discardThreshold);
 	}
 
 	public MessageState setState(MessageState m) {

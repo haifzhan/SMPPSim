@@ -28,13 +28,17 @@
 package com.seleniumsoftware.SMPPSim.pdu;
 
 import java.util.*;
-import java.util.logging.Logger;
 
 import com.seleniumsoftware.SMPPSim.SMPPSim;
 import com.seleniumsoftware.SMPPSim.pdu.util.PduUtilities;
+import org.slf4j.LoggerFactory;
 
 public class DeliveryReceipt extends DeliverSM {
-	private static Logger logger = Logger.getLogger("com.seleniumsoftware.smppsim");
+    
+        
+    private static org.slf4j.Logger logger = LoggerFactory.getLogger(DeliverSM.class);
+
+//	private static Logger logger = Logger.getLogger("com.seleniumsoftware.smppsim");
 
 	// PDU fields
 	private String message_id = "";
@@ -236,7 +240,7 @@ public class DeliveryReceipt extends DeliverSM {
 	 * @param string
 	 */
 	public void setDone_date(String string) {
-		logger.finest("Setting done_date=" + string);
+		logger.debug("Setting done_date=" + string);
 		done_date = string;
 	}
 

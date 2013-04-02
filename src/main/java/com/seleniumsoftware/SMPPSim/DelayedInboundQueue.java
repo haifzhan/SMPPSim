@@ -29,16 +29,19 @@ package com.seleniumsoftware.SMPPSim;
 
 import com.seleniumsoftware.SMPPSim.exceptions.InboundQueueFullException;
 import com.seleniumsoftware.SMPPSim.pdu.*;
-import java.util.logging.*;
 import java.util.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DelayedInboundQueue implements Runnable {
 	
 	private static DelayedInboundQueue diqueue;
 
-	private static Logger logger = Logger
-			.getLogger("com.seleniumsoftware.smppsim");
+//	private static Logger logger = Logger
+//			.getLogger("com.seleniumsoftware.smppsim");
 
+    private static Logger logger = LoggerFactory.getLogger(DelayedInboundQueue.class);
+    
 	private Smsc smsc = Smsc.getInstance();
 	
 	private InboundQueue iqueue = InboundQueue.getInstance();
@@ -68,7 +71,7 @@ public class DelayedInboundQueue implements Runnable {
 		synchronized (delayed_queue_pdus) {
 			synchronized (delayed_queue_attempts) {
 				if (!delayed_queue_pdus.contains(pdu)) {
-					logger.finest("DelayedInboundQueue: adding object to queue<"
+					logger.debug("DelayedInboundQueue: adding object to queue<"
 							+ pdu.toString() + ">");
 					delayed_queue_pdus.add(pdu);
 					delayed_queue_attempts.add(new Integer(0));
@@ -78,7 +81,7 @@ public class DelayedInboundQueue implements Runnable {
 						int a = delayed_queue_attempts.get(i).intValue();
 						a++;
 						delayed_queue_attempts.set(i,a);
-						logger.finest("DelayedInboundQueue: incremented retry count to "+a+" for "+"<"
+						logger.debug("DelayedInboundQueue: incremented retry count to "+a+" for "+"<"
 								+ pdu.toString() + ">");
 					}
 				}
@@ -92,7 +95,7 @@ public class DelayedInboundQueue implements Runnable {
 		int seqno = pdu.getSeq_no();
 		synchronized (delayed_queue_pdus) {
 			synchronized (delayed_queue_attempts) {
-				logger.finest("DelayedInboundQueue: removing object from queue<"
+				logger.debug("DelayedInboundQueue: removing object from queue<"
 						+ pdu.toString() + ">");
 				int i = delayed_queue_pdus.indexOf(pdu);
 				if (i > -1) {
@@ -100,7 +103,7 @@ public class DelayedInboundQueue implements Runnable {
 					if (mo.getSeq_no() == seqno) {
 						delayed_queue_pdus.remove(i);
 						delayed_queue_attempts.remove(i);
-						logger.finest("Removed delayed message because it was delivered OK or with permanent error. seqno="+seqno);
+						logger.debug("Removed delayed message because it was delivered OK or with permanent error. seqno="+seqno);
 					}
 				}
 				logger.info("DelayedInboundQueue: now contains "
@@ -136,7 +139,7 @@ public class DelayedInboundQueue implements Runnable {
 										.intValue() + 1;
 								delayed_queue_attempts.set(i, new Integer(
 										attempts));
-								logger.finest("Requesting retry delivery of message "+mo.getSeq_no());
+								logger.debug("Requesting retry delivery of message "+mo.getSeq_no());
 							} else {
 								logger.info("MO message not delivered after max ("+max_attempts+") allowed attempts so deleting : "+delayed_queue_pdus.get(i).getSeq_no());
 								delayed_queue_pdus.remove(i);

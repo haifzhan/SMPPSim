@@ -28,11 +28,14 @@
 package com.seleniumsoftware.SMPPSim.pdu;
 
 import java.io.Serializable;
-import java.util.logging.Logger;
+import org.slf4j.LoggerFactory;
 
 abstract public class Pdu implements Serializable {
 
-	static Logger logger = Logger.getLogger("com.seleniumsoftware.smppsim");
+        
+    private static org.slf4j.Logger logger = LoggerFactory.getLogger(DeliverSM.class);
+
+//	static Logger logger = Logger.getLogger("com.seleniumsoftware.smppsim");
 
 	// need this for RMI use
 	public Pdu() {

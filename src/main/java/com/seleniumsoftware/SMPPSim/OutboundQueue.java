@@ -31,6 +31,7 @@ import com.seleniumsoftware.SMPPSim.pdu.SubmitSM;
 
 import java.util.logging.*;
 import java.util.*;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Martin Woolley
@@ -41,7 +42,8 @@ import java.util.*;
  */
 public class OutboundQueue implements Runnable  {
 
-	private static Logger logger = Logger.getLogger("com.seleniumsoftware.smppsim");
+    private static org.slf4j.Logger logger = LoggerFactory.getLogger(OutboundQueue.class);
+//	private static Logger logger = Logger.getLogger("com.seleniumsoftware.smppsim");
 	private Smsc smsc = Smsc.getInstance();
 	private LifeCycleManager lcm = smsc.getLcm();
 
@@ -53,13 +55,13 @@ public class OutboundQueue implements Runnable  {
 
 	public synchronized void addMessageState(MessageState message)
 		throws OutboundQueueFullException {
-		logger.finest(
+		logger.debug(
 			"OutboundQueue: adding object to queue<"
 				+ message.toString()
 				+ ">");
 		if (queue.size() < smsc.getOutbound_queue_capacity()) {
 			queue.add(message);
-			logger.fine(
+			logger.debug(
 				"Added object to OutboundQueue. Queue now contains "
 					+ queue.size()
 					+ " object(s)");
@@ -122,12 +124,12 @@ public class OutboundQueue implements Runnable  {
 		int i = queue.indexOf(m);
 		if (i > -1) {
 			MessageState message = queue.remove(i);
-			logger.fine(
+			logger.debug(
 				"Removed object from OutboundQueue. Queue now contains "
 					+ queue.size()
 					+ " object(s)");
 		} else {
-			logger.warning(
+			logger.error(
 				"Attempt to remove non-existent object from OutboundQueue: "
 					+ m.toString());
 		}
@@ -171,8 +173,7 @@ public class OutboundQueue implements Runnable  {
 						"Lifecycle Service: OutboundQueue is Empty  - waiting");
 					wait();
 				} catch (InterruptedException e) {
-					logger.log(
-						Level.WARNING,
+					logger.error(
 						"Exception in OutboundQueue: " + e.getMessage(),
 						e);
 				}
@@ -187,11 +188,11 @@ public class OutboundQueue implements Runnable  {
 		for (int i = 0; i < count; i++) {
 			m = (MessageState) messages[i];
 			if (!m.responseSent()) {
-				//logger.finest("Response not yet sent so ignoring this MessageState object for now");
+				//logger.debug("Response not yet sent so ignoring this MessageState object for now");
 				continue;
 			}
 			if (lcm.messageShouldBeDiscarded(m)) {
-				//logger.finest("Disarding OutboundQueue message " + m.toString());
+				//logger.debug("Disarding OutboundQueue message " + m.toString());
 				removeMessageState(m);
 			} else {
 				byte currentState = m.getState();
@@ -203,18 +204,18 @@ public class OutboundQueue implements Runnable  {
 		sleeptime = SMPPSim.getMessageStateCheckFrequency() - duration;
 		if (sleeptime > 0) {
 			try {
-				logger.finest(
+				logger.debug(
 					"Lifecycle Service sleeping for "
 						+ sleeptime
 						+ " milliseconds");
 				Thread.sleep(sleeptime);
 			} catch (InterruptedException e) {
-				logger.warning(
+				logger.error(
 					"Exception whilst Lifecycle Service was sleeping "
 						+ e.getMessage());
 			}
 		} else {
-			logger.warning(
+			logger.error(
 				"It's taking longer to process the OutboundQueue than MESSAGE_STATE_CHECK_FREQUENCY milliseconds. Recommend this value is increased");
 		}
 	}

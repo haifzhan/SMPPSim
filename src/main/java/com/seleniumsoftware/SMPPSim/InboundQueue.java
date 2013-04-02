@@ -30,13 +30,15 @@ package com.seleniumsoftware.SMPPSim;
 import com.seleniumsoftware.SMPPSim.exceptions.InboundQueueFullException;
 import com.seleniumsoftware.SMPPSim.pdu.*;
 import com.seleniumsoftware.SMPPSim.util.*;
-import java.util.logging.*;
 import java.util.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class InboundQueue implements Runnable {
 
-	private static Logger logger = Logger
-			.getLogger("com.seleniumsoftware.smppsim");
+    private static Logger logger = LoggerFactory.getLogger(DeterministicLifeCycleManager.class);
+//	private static Logger logger = Logger
+//			.getLogger("com.seleniumsoftware.smppsim");
 
 	private Smsc smsc = Smsc.getInstance();
 	
@@ -68,17 +70,17 @@ public class InboundQueue implements Runnable {
 		synchronized (inbound_queue) {
 			if (inbound_queue.size() >= smsc.getInbound_queue_capacity())
 				throw new InboundQueueFullException();
-			logger.finest("InboundQueue: adding object to queue<"
+			logger.debug("InboundQueue: adding object to queue<"
 					+ message.toString() + ">");
 			inbound_queue.add(message);
-			logger.finest("InboundQueue: now contains " + inbound_queue.size()
+			logger.debug("InboundQueue: now contains " + inbound_queue.size()
 					+ " object(s)");
 			inbound_queue.notifyAll();
 		}
 	}
 
 	public void deliveryResult(int seqno, int command_status) {
-		logger.finest("MO message delivery attempted: seqno="+seqno+",status="+command_status+",responses pending="+response_queue.size());
+		logger.debug("MO message delivery attempted: seqno="+seqno+",status="+command_status+",responses pending="+response_queue.size());
 		synchronized (response_queue) {
 			for (int i=0;i<response_queue.size();i++) {
 				Pdu pdu = response_queue.get(i);
@@ -94,7 +96,7 @@ public class InboundQueue implements Runnable {
 				}
 			}
 		}
-		logger.finest("Awaiting " + response_queue.size()+" responses");
+		logger.debug("Awaiting " + response_queue.size()+" responses");
 	}
 
 	public void removeMessage(Pdu m) {
@@ -102,9 +104,9 @@ public class InboundQueue implements Runnable {
 	}
 
 	public void removeMessage(Pdu m, ArrayList<Pdu> queue) {
-		logger.finest("Removing PDU from queue. Queue currently contains:"+queue.size());
+		logger.debug("Removing PDU from queue. Queue currently contains:"+queue.size());
 		for (int i=0;i<queue.size();i++) {
-			logger.finest(((Pdu) queue.get(i)).toString());
+			logger.debug(((Pdu) queue.get(i)).toString());
 		}
 		synchronized (queue) {
 			int i = queue.indexOf(m);
@@ -112,11 +114,11 @@ public class InboundQueue implements Runnable {
 				queue.remove(i);
 			} else {
 				logger
-						.warning("Attempt to remove non-existent object from InboundQueue: "
+						.warn("Attempt to remove non-existent object from InboundQueue: "
 								+ m.toString());
 			}
 		}
-		logger.finest("Queue now contains:"+queue.size());
+		logger.debug("Queue now contains:"+queue.size());
 	}
 
 	private Object[] getAllMessages() {
@@ -141,7 +143,7 @@ public class InboundQueue implements Runnable {
 	public void notifyReceiverBound() {
 		synchronized (inbound_queue) {
 			logger
-					.finest("A receiver bound - will notify InboundQueue service");
+					.debug("A receiver bound - will notify InboundQueue service");
 			inbound_queue.notifyAll();
 		}
 	}
@@ -217,16 +219,15 @@ public class InboundQueue implements Runnable {
 
 					}
 					inbound_queue.wait();
-				} catch (InterruptedException e) {
-					logger.log(Level.WARNING, "Exception in InboundQueue: "
-							+ e.getMessage(), e);
+				} catch (InterruptedException ex) {
+					logger.error(ex.getMessage());
 				}
 			}
 		}
 		if (smsc.getReceiverBoundCount() != 0) {
 			pdus = getAllMessages();
 			pduCount = pdus.length;
-			logger.finest("Attempting to deliver " + pduCount
+			logger.debug("Attempting to deliver " + pduCount
 					+ " messages from InboundQueue");
 
 			int i = 0;
@@ -283,7 +284,7 @@ public class InboundQueue implements Runnable {
 			}
 			//logger.info(" ");
 			if (receiver == null) {
-				//logger.warning("InboundQueue: no active receiver object to deliver message. Application must issue BIND_RECEIVER with approriate address_range. Message has been moved to the pending queue");
+				//logger.warn("InboundQueue: no active receiver object to deliver message. Application must issue BIND_RECEIVER with approriate address_range. Message has been moved to the pending queue");
 				removeMessage(pdu, from_queue);
 				addPendingQueue(pdu);
 				if (smsc.getReceiverBoundCount() == 0) {
@@ -304,20 +305,15 @@ public class InboundQueue implements Runnable {
 					 */
 					synchronized (response_queue) {
 						response_queue.add(pdu);
-						logger.finest("Added message "+pdu.getSeq_no()+" to response queue");
+						logger.debug("Added message "+pdu.getSeq_no()+" to response queue");
 					}
 					removeMessage(pdu, from_queue);
 				} catch (Exception e) {
-					logger.log(Level.WARNING, "Exception in InboundQueue: "
-							+ e.getMessage(), e);
+					logger.error(e.getMessage());
 				}
 			}
 		} catch (Exception ex) {
-			logger
-					.log(
-							Level.WARNING,
-							"Exception whilst marshalling PDU from InboundQueue. Message discarded",
-							ex);
+			logger.error(ex.getMessage());
 		}
 
 		return true;
@@ -335,7 +331,7 @@ public class InboundQueue implements Runnable {
 			logger.info(" ");
 			receiver = smsc.selectReceiver(pdu.getDestination_addr());
 			if (receiver == null) {
-				//logger.warning("InboundQueue: no active receiver object to deliver message. Application must issue BIND_RECEIVER with approriate address_range. Message deleted from the inbound queue.");
+				//logger.warn("InboundQueue: no active receiver object to deliver message. Application must issue BIND_RECEIVER with approriate address_range. Message deleted from the inbound queue.");
 				removeMessage(pdu);
 				if (smsc.getReceiverBoundCount() == 0) {
 					//logger.info("No receiver sessions bound - suspending InboundQueue processing");
@@ -348,17 +344,12 @@ public class InboundQueue implements Runnable {
 					removeMessage(pdu);
 					smsc.incDataSmOK();
 				} catch (Exception e) {
-					logger.log(Level.WARNING, "Exception in InboundQueue: "
-							+ e.getMessage(), e);
+					logger.error(e.getMessage());
 					smsc.incDataSmERR();
 				}
 			}
 		} catch (Exception ex) {
-			logger
-					.log(
-							Level.WARNING,
-							"Exception whilst marshalling PDU from InboundQueue. Message discarded",
-							ex);
+			logger.error(ex.getMessage());
 		}
 
 		return true;

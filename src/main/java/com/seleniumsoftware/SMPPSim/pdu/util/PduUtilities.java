@@ -28,7 +28,7 @@ package com.seleniumsoftware.SMPPSim.pdu.util;
 import com.seleniumsoftware.SMPPSim.pdu.*;
 
 import java.io.UnsupportedEncodingException;
-import java.util.logging.*;
+import org.slf4j.LoggerFactory;
 
 public class PduUtilities {
 	/*
@@ -57,8 +57,8 @@ public class PduUtilities {
 			null, // reserved
 			"EUC_JP", "EUC_KR" };
 
-	private static Logger logger = Logger.getLogger("com.seleniumsoftware.smppsim");
-
+//	private static Logger logger = Logger.getLogger("com.seleniumsoftware.smppsim");
+    private static org.slf4j.Logger logger = LoggerFactory.getLogger(PduUtilities.class);
 	public static int getRandomSubmitError() {
 		return PduConstants.SUBMIT_SM_ERRORS[(int) (Math.random() * PduConstants.submitsm_error_count)];
 	}
@@ -125,7 +125,7 @@ public class PduUtilities {
 
 	public static int getIntegerValue(byte[] msg, int start, int len) throws Exception {
 		if (len > 4) {
-			logger.warning("Invalid length (" + len + ") for integer conversion");
+			logger.debug("Invalid length (" + len + ") for integer conversion");
 			throw new Exception("Invalid length (" + len + ") for integer conversion");
 		}
 		int inx = start;
@@ -218,20 +218,20 @@ public class PduUtilities {
 	}
 
 	public static byte[] makeShortTLV(short t, short value) {
-		logger.finest("makeShortTLV(" + t + "," + value + ")");
+		logger.debug("makeShortTLV(" + t + "," + value + ")");
 		byte[] tlv = new byte[6];
 		byte[] tag = makeByteArrayFromInt(t, 2);
-		logger.finest("makeShortTLV: made tag bytes");
+		logger.debug("makeShortTLV: made tag bytes");
 		byte[] len = makeByteArrayFromInt(2, 2);
-		logger.finest("makeShortTLV: made length bytes");
+		logger.debug("makeShortTLV: made length bytes");
 		byte[] val = makeByteArrayFromInt(value, 2);
-		logger.finest("makeShortTLV: made value bytes");
+		logger.debug("makeShortTLV: made value bytes");
 		System.arraycopy(tag, 0, tlv, 0, 2);
-		logger.finest("makeShortTLV: copied tag bytes to result array");
+		logger.debug("makeShortTLV: copied tag bytes to result array");
 		System.arraycopy(len, 0, tlv, 2, 2);
-		logger.finest("makeShortTLV: copied length bytes to result array");
+		logger.debug("makeShortTLV: copied length bytes to result array");
 		System.arraycopy(val, 0, tlv, 4, 2);
-		logger.finest("makeShortTLV: copied value bytes to result array");
+		logger.debug("makeShortTLV: copied value bytes to result array");
 		return tlv;
 	}
 
@@ -247,7 +247,7 @@ public class PduUtilities {
 	}
 
 	public static byte[] makeCOctetStringTLV(short t, byte[] value) {
-		logger.finest("making OctetStringTLV:" + byteArrayToHexString(value));
+		logger.debug("making OctetStringTLV:" + byteArrayToHexString(value));
 		byte[] tlv = new byte[value.length + 5];
 		int l = value.length + 1;
 		byte[] tag = makeByteArrayFromInt(t, 2);
@@ -260,7 +260,7 @@ public class PduUtilities {
 	}
 
 	public static byte[] makeRawTLV(short t, byte[] value) {
-		logger.finest("making RawTLV:" + byteArrayToHexString(value));
+		logger.debug("making RawTLV:" + byteArrayToHexString(value));
 		byte[] tlv = new byte[value.length + 4];
 		int l = value.length;
 		byte[] tag = makeByteArrayFromInt(t, 2);

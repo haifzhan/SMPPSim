@@ -1,11 +1,12 @@
 package com.seleniumsoftware.examples;
 
 import java.net.ServerSocket;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CallbackServer {
-	
-	private static Logger logger = Logger.getLogger("com.seleniumsoftware.examples");
+	private static Logger logger = LoggerFactory.getLogger(CallbackServer.class);
+//	private static Logger logger = Logger.getLogger("com.seleniumsoftware.examples");
 	private CallbackHandler[] callbackHandlers;
 	private ServerSocket ss;
 	private int connections;
@@ -25,7 +26,7 @@ public class CallbackServer {
 			ss = new ServerSocket(port, 10);
 			logger.info("Example Callback Server is listening on port 3333");
 		} catch (Exception e) {
-			logger.severe("Exception creating CallbackServer server: " + e.toString());
+			logger.debug("Exception creating CallbackServer server: " + e.toString());
 			e.printStackTrace();
 			throw e;
 		}

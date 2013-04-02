@@ -31,14 +31,14 @@ import com.seleniumsoftware.SMPPSim.exceptions.*;
 import com.seleniumsoftware.SMPPSim.pdu.*;
 import com.seleniumsoftware.SMPPSim.pdu.util.PduUtilities;
 import com.seleniumsoftware.SMPPSim.util.*;
-import java.util.logging.*;
 import org.apache.regexp.*;
+import org.slf4j.LoggerFactory;
 
 public class StandardProtocolHandler {
     private volatile long counter = 0;
     
-    
-	 Logger logger = Logger.getLogger(this.getClass().getName());
+    private static org.slf4j.Logger logger = LoggerFactory.getLogger(StandardProtocolHandler.class);
+//	 Logger logger = Logger.getLogger(this.getClass().getName());
 
 	Smsc smsc = Smsc.getInstance();
 
@@ -129,7 +129,7 @@ public class StandardProtocolHandler {
 			getUnbindResponse(message, len);
 			break;
 		case PduConstants.GENERIC_NAK:
-			logger.warning(": Received GENERIC_NAK:");
+			logger.debug(": Received GENERIC_NAK:");
 			getGenericNakResponse(message, len, false);
 			break;
 		case PduConstants.DATA_SM:
@@ -139,14 +139,14 @@ public class StandardProtocolHandler {
 			processData_SM_Resp(message, len);
 			break;
 		default:
-			logger.warning(": Received unrecognised message:");
+			logger.debug(": Received unrecognised message:");
 			LoggingUtilities.hexDump(": UNRECOGNISED MESSAGE:", message, len);
 			getGenericNakResponse(message, len, true);
 		}
 
 		if ((wasUnbindRequest()) || (wasInvalidBindState())
 				|| (failedAuthentication())) {
-			logger.finest("closing connection");
+			logger.debug("closing connection");
 			getSession().setBound(false);
 			connection.closeConnection();
 		}
@@ -176,7 +176,7 @@ public class StandardProtocolHandler {
 
 		// Validate the session state
 		if (session.isBound()) {
-			logger.warning("Session is already bound");
+			logger.debug("Session is already bound");
 			wasInvalidBindState = true;
 			resp_message = smppresp.errorResponse(smppresp.getCmd_id(),
 					PduConstants.ESME_RINVBNDSTS, smppresp.getSeq_no());
@@ -198,7 +198,7 @@ public class StandardProtocolHandler {
 			failedAuthentication = false;
 			logger.info("New transmitter session bound to SMPPSim");
 		} else {
-			logger.warning("Bind failed authentication check.");
+			logger.debug("Bind failed authentication check.");
 			smsc.incBindTransmitterERR();
 			failedAuthentication = true;
 			if (smsc.isValidSystemId(smppmsg.getSystem_id())) {
@@ -251,7 +251,7 @@ public class StandardProtocolHandler {
 
 		// Validate the session state
 		if (session.isBound()) {
-			logger.warning("Session is already bound");
+			logger.debug("Session is already bound");
 			wasInvalidBindState = true;
 			resp_message = smppresp.errorResponse(smppresp.getCmd_id(),
 					PduConstants.ESME_RINVBNDSTS, smppresp.getSeq_no());
@@ -276,12 +276,12 @@ public class StandardProtocolHandler {
 			try {
 				setAddressRangeRegExp(smppmsg.getAddress_range());
 			} catch (RESyntaxException e) {
-				logger.warning("Invalid regular expression specified in BIND_RECEIVER address_range attribute");
+				logger.debug("Invalid regular expression specified in BIND_RECEIVER address_range attribute");
 				e.printStackTrace();
 			}
 			logger.info("New receiver session bound to SMPPSim");
 		} else {
-			logger.warning("Bind failed authentication check.");
+			logger.debug("Bind failed authentication check.");
 			failedAuthentication = true;
 			if (smsc.isValidSystemId(smppmsg.getSystem_id())) {
 				smppresp.setCmd_status(PduConstants.ESME_RINVPASWD);
@@ -334,7 +334,7 @@ public class StandardProtocolHandler {
 
 		// Validate the session state
 		if (session.isBound()) {
-			logger.warning("Session is already bound");
+			logger.debug("Session is already bound");
 			wasInvalidBindState = true;
 			resp_message = smppresp.errorResponse(smppresp.getCmd_id(),
 					PduConstants.ESME_RALYBND, smppresp.getSeq_no());
@@ -360,12 +360,12 @@ public class StandardProtocolHandler {
 			try {
 				setAddressRangeRegExp(smppmsg.getAddress_range());
 			} catch (RESyntaxException e) {
-				logger.warning("Invalid regular expression specified in BIND_TRANSCEIVER address_range attribute");
+				logger.debug("Invalid regular expression specified in BIND_TRANSCEIVER address_range attribute");
 				e.printStackTrace();
 			}
 			logger.info("New transceiver session bound to SMPPSim");
 		} else {
-			logger.warning("Bind failed authentication check.");
+			logger.debug("Bind failed authentication check.");
 			failedAuthentication = true;
 			if (smsc.isValidSystemId(smppmsg.getSystem_id())) {
 				smppresp.setCmd_status(PduConstants.ESME_RINVPASWD);
@@ -422,7 +422,7 @@ public class StandardProtocolHandler {
 
 		// Validate session
 		if ((!session.isBound()) || (!session.isTransmitter())) {
-			logger.warning("Invalid bind state. Must be bound as transmitter for this PDU");
+			logger.debug("Invalid bind state. Must be bound as transmitter for this PDU");
 			wasInvalidBindState = true;
 			resp_message = smppresp.errorResponse(smppresp.getCmd_id(),
 					PduConstants.ESME_RINVBNDSTS, smppresp.getSeq_no());
@@ -451,7 +451,7 @@ public class StandardProtocolHandler {
 			m = new MessageState(smppmsg, smppresp.getMessage_id());
 			smsc.getOq().addMessageState(m);
 		} catch (OutboundQueueFullException e) {
-			//logger.warning("OutboundQueue full.");
+			//logger.debug("OutboundQueue full.");
 //			resp_message = smppresp.errorResponse(smppresp.getCmd_id(),
 //					PduConstants.ESME_RMSGQFUL, smppresp.getSeq_no());
 //			logPdu(":SUBMIT_SM_RESP (ESME_RMSGQFUL):", resp_message, smppresp);
@@ -480,7 +480,7 @@ public class StandardProtocolHandler {
 				smsc.doLoopback(smppmsg);
 			} catch (InboundQueueFullException e) {
 				logger
-						.warning("Failed to create loopback DELIVER_SM because the Inbound Queue is full");
+						.debug("Failed to create loopback DELIVER_SM because the Inbound Queue is full");
 			}
 		} else {
 			if (SMPPSim.isEsme_to_esme()) {
@@ -488,7 +488,7 @@ public class StandardProtocolHandler {
 					smsc.doEsmeToEsmeDelivery(smppmsg);
 				} catch (InboundQueueFullException e) {
 					logger
-							.warning("Failed to create ESME to ESME DELIVER_SM because the Inbound Queue is full");
+							.debug("Failed to create ESME to ESME DELIVER_SM because the Inbound Queue is full");
 				}
 			}
 		}
@@ -517,7 +517,7 @@ public class StandardProtocolHandler {
 		// Validate session
 		if ((!session.isBound()) || (!session.isTransmitter())) {
 			logger
-					.warning("Invalid bind state. Must be bound as transmitter for this PDU");
+					.debug("Invalid bind state. Must be bound as transmitter for this PDU");
 			wasInvalidBindState = true;
 			resp_message = smppresp.errorResponse(smppresp.getCmd_id(),
 					PduConstants.ESME_RINVBNDSTS, smppresp.getSeq_no());
@@ -580,7 +580,7 @@ public class StandardProtocolHandler {
 
 		// Validate session
 		if (!session.isBound()) {
-			logger.warning("Invalid bind state. Must be bound for this PDU");
+			logger.debug("Invalid bind state. Must be bound for this PDU");
 			wasInvalidBindState = true;
 			resp_message = smppresp.errorResponse(smppresp.getCmd_id(),
 					PduConstants.ESME_RINVBNDSTS, smppresp.getSeq_no());
@@ -598,7 +598,7 @@ public class StandardProtocolHandler {
 		if (session.isReceiver()) {
 			smsc.receiverUnbound();
 		}
-		logger.finest("Receiver:" + session.isReceiver() + ",Transmitter:"
+		logger.debug("Receiver:" + session.isReceiver() + ",Transmitter:"
 				+ session.isTransmitter());
 		if (session.isReceiver() && session.isTransmitter())
 			smsc.setTrxBoundCount(smsc.getTrxBoundCount() - 1);
@@ -639,7 +639,7 @@ public class StandardProtocolHandler {
 		// Validate session
 		if ((!session.isBound()) || (!session.isTransmitter())) {
 			logger
-					.warning("Invalid bind state. Must be bound as transmitter for this PDU");
+					.debug("Invalid bind state. Must be bound as transmitter for this PDU");
 			wasInvalidBindState = true;
 			resp_message = smppresp.errorResponse(smppresp.getCmd_id(),
 					PduConstants.ESME_RINVBNDSTS, smppresp.getSeq_no());
@@ -693,7 +693,7 @@ public class StandardProtocolHandler {
 		// Validate session
 		if ((!session.isBound()) || (!session.isTransmitter())) {
 			logger
-					.warning("Invalid bind state. Must be bound as transmitter for this PDU");
+					.debug("Invalid bind state. Must be bound as transmitter for this PDU");
 			wasInvalidBindState = true;
 			resp_message = smppresp.errorResponse(smppresp.getCmd_id(),
 					PduConstants.ESME_RINVBNDSTS, smppresp.getSeq_no());
@@ -749,7 +749,7 @@ public class StandardProtocolHandler {
 		// Validate session
 		if ((!session.isBound()) || (!session.isTransmitter())) {
 			logger
-					.warning("Invalid bind state. Must be bound as transmitter for this PDU");
+					.debug("Invalid bind state. Must be bound as transmitter for this PDU");
 			wasInvalidBindState = true;
 			resp_message = smppresp.errorResponse(smppresp.getCmd_id(),
 					PduConstants.ESME_RINVBNDSTS, smppresp.getSeq_no());
@@ -802,7 +802,7 @@ public class StandardProtocolHandler {
 
 		// Validate session
 		if (!session.isBound()) {
-			logger.warning("Invalid bind state. Must be bound for this PDU");
+			logger.debug("Invalid bind state. Must be bound for this PDU");
 			wasInvalidBindState = true;
 			resp_message = smppresp.errorResponse(smppresp.getCmd_id(),
 					PduConstants.ESME_RINVBNDSTS, smppresp.getSeq_no());
@@ -844,7 +844,7 @@ public class StandardProtocolHandler {
 		// Validate session
 		if ((!session.isBound()) || (!session.isTransmitter())) {
 			logger
-					.warning("Invalid bind state. Must be bound as transmitter for this PDU");
+					.debug("Invalid bind state. Must be bound as transmitter for this PDU");
 			wasInvalidBindState = true;
 			resp_message = smppresp.errorResponse(smppresp.getCmd_id(),
 					PduConstants.ESME_RINVBNDSTS, smppresp.getSeq_no());
@@ -883,7 +883,7 @@ public class StandardProtocolHandler {
 		// m = new MessageState(smppmsg, smppresp.getMessage_id());
 		// smsc.getOq().addMessageState(m);
 		// } catch (OutboundQueueFullException e) {
-		// logger.warning("OutboundQueue full.");
+		// logger.debug("OutboundQueue full.");
 		// resp_message = smppresp.errorResponse(smppresp.getCmd_id(),
 		// PduConstants.ESME_RMSGQFUL, smppresp.getSeq_no());
 		// logPdu(":DATA_SM_RESP (ESME_RMSGQFUL):", resp_message, smppresp);
@@ -910,7 +910,7 @@ public class StandardProtocolHandler {
 			try {
 				smsc.doLoopback(smppmsg);
 			} catch (InboundQueueFullException e) {
-				//logger.warning("Failed to create loopback DELIVER_SM because the Inbound Queue is full");
+				//logger.debug("Failed to create loopback DELIVER_SM because the Inbound Queue is full");
 			}
 		}
 	}

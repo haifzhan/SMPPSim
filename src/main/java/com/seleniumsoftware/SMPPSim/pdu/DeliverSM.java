@@ -28,17 +28,18 @@
 package com.seleniumsoftware.SMPPSim.pdu;
 
 import java.util.ArrayList;
-import java.util.logging.Logger;
 
 import com.seleniumsoftware.SMPPSim.SMPPSim;
 import com.seleniumsoftware.SMPPSim.Smsc;
 import com.seleniumsoftware.SMPPSim.pdu.util.PduUtilities;
+import org.slf4j.LoggerFactory;
 
 public class DeliverSM extends Response implements Marshaller, Cloneable {
 
 	private Smsc smsc = Smsc.getInstance();
 
-	private static Logger logger = Logger.getLogger("com.seleniumsoftware.smppsim");
+//	private static Logger logger = Logger.getLogger("com.seleniumsoftware.smppsim");
+    private static org.slf4j.Logger logger = LoggerFactory.getLogger(DeliverSM.class);
 
 	private long created;
 
@@ -219,21 +220,21 @@ public class DeliverSM extends Response implements Marshaller, Cloneable {
 	public byte[] marshall() throws Exception {
 		out.reset();
 		super.prepareHeaderForMarshalling();
-		logger.finest("Prepared header for marshalling");
+		logger.debug("Prepared header for marshalling");
 		out.write(PduUtilities.stringToNullTerminatedByteArray(service_type));
-		logger.finest("marshalled service_type");
+		logger.debug("marshalled service_type");
 		out.write(PduUtilities.makeByteArrayFromInt(source_addr_ton, 1));
-		logger.finest("marshalled source_addr_ton");
+		logger.debug("marshalled source_addr_ton");
 		out.write(PduUtilities.makeByteArrayFromInt(source_addr_npi, 1));
-		logger.finest("marshalled source_addr_npi");
+		logger.debug("marshalled source_addr_npi");
 
 		out.write(PduUtilities.stringToNullTerminatedByteArray(source_addr));
-		logger.finest("marshalled source_addr");
+		logger.debug("marshalled source_addr");
 
 		out.write(PduUtilities.makeByteArrayFromInt(dest_addr_ton, 1));
-		logger.finest("marshalled dest_addr_ton");
+		logger.debug("marshalled dest_addr_ton");
 		out.write(PduUtilities.makeByteArrayFromInt(dest_addr_npi, 1));
-		logger.finest("marshalled dest_addr_npi");
+		logger.debug("marshalled dest_addr_npi");
 
 		out.write(PduUtilities.stringToNullTerminatedByteArray(destination_addr));
 
@@ -245,93 +246,93 @@ public class DeliverSM extends Response implements Marshaller, Cloneable {
 		//		logger.info("marshalled hard code destination_addr for delivery receipt");
 		//		// end temp code
 
-		logger.finest("marshalled destination_addr");
+		logger.debug("marshalled destination_addr");
 
 		out.write(PduUtilities.makeByteArrayFromInt(esm_class, 1));
-		logger.finest("marshalled esm_class");
+		logger.debug("marshalled esm_class");
 		out.write(PduUtilities.makeByteArrayFromInt(protocol_ID, 1));
-		logger.finest("marshalled protocol_ID");
+		logger.debug("marshalled protocol_ID");
 		out.write(PduUtilities.makeByteArrayFromInt(priority_flag, 1));
-		logger.finest("marshalled priority_flag");
+		logger.debug("marshalled priority_flag");
 		out.write(PduUtilities.stringToNullTerminatedByteArray(""));
-		logger.finest("marshalled schedule_delivery_time");
+		logger.debug("marshalled schedule_delivery_time");
 		// schedule_delivery_time is null for this PDU
 		out.write(PduUtilities.stringToNullTerminatedByteArray(""));
-		logger.finest("marshalled validity_period");
+		logger.debug("marshalled validity_period");
 		// validity_period is null for this PDU
 		out.write(PduUtilities.makeByteArrayFromInt(registered_delivery_flag, 1));
-		logger.finest("marshalled registered_delivery_flag");
+		logger.debug("marshalled registered_delivery_flag");
 		out.write(PduUtilities.makeByteArrayFromInt(0, 1));
 		// replace_if_present is null for this PDU
-		logger.finest("marshalled replace_if_present");
+		logger.debug("marshalled replace_if_present");
 		out.write(PduUtilities.makeByteArrayFromInt(data_coding, 1));
-		logger.finest("marshalled data_coding");
+		logger.debug("marshalled data_coding");
 		out.write(PduUtilities.makeByteArrayFromInt(0, 1));
 		// sm_default_msg_id is null for this PDU
-		logger.finest("marshalled sm_default_msg_id");
+		logger.debug("marshalled sm_default_msg_id");
 		out.write(PduUtilities.makeByteArrayFromInt(sm_length, 1));
-		logger.finest("marshalled sm_length");
+		logger.debug("marshalled sm_length");
 		out.write(short_message);
-		logger.finest("marshalled short_message");
+		logger.debug("marshalled short_message");
 		// include optional TLV parameters if there are any
 		if (string_user_message_reference != null && !string_user_message_reference.equals("")) {
 			user_message_reference = Short.parseShort(string_user_message_reference);
 			out.write(PduUtilities.makeShortTLV(PduConstants.USER_MESSAGE_REFERENCE_TAG, user_message_reference));
 		}
-		logger.finest("marshalled user_message_reference");
+		logger.debug("marshalled user_message_reference");
 
 		if (string_source_port != null && !string_source_port.equals("")) {
 			source_port = Short.parseShort(string_source_port);
 			out.write(PduUtilities.makeShortTLV(PduConstants.SOURCE_PORT, source_port));
 		}
-		logger.finest("marshalled source_port");
+		logger.debug("marshalled source_port");
 
 		if (string_destination_port != null && !string_destination_port.equals("")) {
 			destination_port = Short.parseShort(string_destination_port);
 			out.write(PduUtilities.makeShortTLV(PduConstants.DESTINATION_PORT, destination_port));
 		}
-		logger.finest("marshalled destination_port");
+		logger.debug("marshalled destination_port");
 
 		if (string_sar_msg_ref_num != null && !string_sar_msg_ref_num.equals("")) {
 			sar_msg_ref_num = Short.parseShort(string_sar_msg_ref_num);
 			out.write(PduUtilities.makeShortTLV(PduConstants.SAR_MSG_REF_NUM, sar_msg_ref_num));
 		}
-		logger.finest("marshalled sar_msg_ref_num");
+		logger.debug("marshalled sar_msg_ref_num");
 
 		if (string_sar_total_segments != null && !string_sar_total_segments.equals("")) {
 			sar_total_segments = Short.parseShort(string_sar_total_segments);
 			out.write(PduUtilities.makeByteTLV(PduConstants.SAR_TOTAL_SEGMENTS, sar_total_segments));
 		}
-		logger.finest("marshalled sar_total_segments");
+		logger.debug("marshalled sar_total_segments");
 
 		if (string_sar_segment_seqnum != null && !string_sar_segment_seqnum.equals("")) {
 			sar_segment_seqnum = Short.parseShort(string_sar_segment_seqnum);
 			out.write(PduUtilities.makeByteTLV(PduConstants.SAR_SEGMENT_SEQNUM, sar_segment_seqnum));
 		}
-		logger.finest("marshalled sar_segment_seqnum");
+		logger.debug("marshalled sar_segment_seqnum");
 
 		if (string_user_response_code != null && !string_user_response_code.equals("")) {
 			user_response_code = Short.parseShort(string_user_response_code);
 			out.write(PduUtilities.makeByteTLV(PduConstants.USER_RESPONSE_CODE, user_response_code));
 		}
-		logger.finest("marshalled user_response_code");
+		logger.debug("marshalled user_response_code");
 
 		if (string_privacy_indicator != null && !string_privacy_indicator.equals("")) {
 			privacy_indicator = Short.parseShort(string_privacy_indicator);
 			out.write(PduUtilities.makeByteTLV(PduConstants.PRIVACY_INDICATOR, privacy_indicator));
 		}
-		logger.finest("marshalled privacy_indicator");
+		logger.debug("marshalled privacy_indicator");
 
 		if (string_payload_type != null && !string_payload_type.equals("")) {
 			payload_type = Short.parseShort(string_payload_type);
 			out.write(PduUtilities.makeByteTLV(PduConstants.PAYLOAD_TYPE, payload_type));
 		}
-		logger.finest("marshalled payload_type");
+		logger.debug("marshalled payload_type");
 		if (string_message_payload != null && !string_message_payload.equals("")) {
 			message_payload = string_message_payload;
 			out.write(PduUtilities.makeCOctetStringTLV(PduConstants.MESSAGE_PAYLOAD, message_payload.getBytes()));
 		}
-		logger.finest("marshalled message_payload");
+		logger.debug("marshalled message_payload");
 
 		if (string_callback_num != null && !string_callback_num.equals("")) {
 			// min 4 bytes long so pad with spaces if necessary
@@ -340,7 +341,7 @@ public class DeliverSM extends Response implements Marshaller, Cloneable {
 			callback_num = string_callback_num;
 			out.write(PduUtilities.makeCOctetStringTLV(PduConstants.CALLBACK_NUM, callback_num.getBytes()));
 		}
-		logger.finest("marshalled callback_num");
+		logger.debug("marshalled callback_num");
 
 		if (string_source_subaddress != null && !string_source_subaddress.equals("")) {
 			// min 2 chars starting with 128 (only sub_address tag supported at present)
@@ -349,7 +350,7 @@ public class DeliverSM extends Response implements Marshaller, Cloneable {
 			System.arraycopy(string_source_subaddress.getBytes(), 0, source_subaddress, 1, string_source_subaddress.length());
 			out.write(PduUtilities.makeCOctetStringTLV(PduConstants.SOURCE_SUBADDRESS, source_subaddress));
 		}
-		logger.finest("marshalled source_subaddress");
+		logger.debug("marshalled source_subaddress");
 
 		if (string_dest_subaddress != null && !string_dest_subaddress.equals("")) {
 			// min 2 chars starting with 128 (only sub_address tag supported at present)
@@ -358,13 +359,13 @@ public class DeliverSM extends Response implements Marshaller, Cloneable {
 			System.arraycopy(string_dest_subaddress.getBytes(), 0, dest_subaddress, 1, string_dest_subaddress.length());
 			out.write(PduUtilities.makeCOctetStringTLV(PduConstants.DEST_SUBADDRESS, dest_subaddress));
 		}
-		logger.finest("marshalled dest_subaddress");
+		logger.debug("marshalled dest_subaddress");
 
 		if (string_language_indicator != null && !string_language_indicator.equals("")) {
 			language_indicator = Short.parseShort(string_language_indicator);
 			out.write(PduUtilities.makeByteTLV(PduConstants.LANGUAGE_INDICATOR, language_indicator));
 		}
-		logger.finest("marshalled language_indicator");
+		logger.debug("marshalled language_indicator");
 
 		if (string_ussd_service_op != null && !string_ussd_service_op.equals("")) {
 			ussd_service_op = Byte.parseByte(string_ussd_service_op);

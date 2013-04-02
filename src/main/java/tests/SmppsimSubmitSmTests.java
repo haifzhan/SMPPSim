@@ -8,6 +8,7 @@ import java.util.logging.*;
 import com.logica.smpp.*;
 import com.logica.smpp.pdu.*;
 import com.logica.smpp.util.*;
+import org.slf4j.LoggerFactory;
 
 public class SmppsimSubmitSmTests extends TestCase {
 
@@ -24,7 +25,9 @@ public class SmppsimSubmitSmTests extends TestCase {
 	String smppHost = "localhost";
 	int smppPort = 2775;
 	int smppAltPort1 = 2776;
-	private static Logger logger = Logger.getLogger("smppsim.tests");
+    private static org.slf4j.Logger logger = LoggerFactory.getLogger("test");
+
+//	private static Logger logger = Logger.getLogger("smppsim.tests");
 
 	public SmppsimSubmitSmTests() {
 	}
@@ -50,8 +53,7 @@ public class SmppsimSubmitSmTests extends TestCase {
 			breq.setSystemType(smppSystemType);
 			resp = session.bind(breq);
 		} catch (Exception e) {
-			logger.log(Level.WARNING, "Exception: " + e.getMessage(), e);
-			logger.warning(
+			logger.error(
 				"Exception whilst setting up or executing bind transmitter. "
 					+ e.getMessage());
 			fail(
@@ -86,10 +88,10 @@ public class SmppsimSubmitSmTests extends TestCase {
 				Data.ESME_ROK,
 				response.getCommandStatus());
 		} catch (SocketException se) {
-			logger.warning("Connection has dropped");
+			logger.error("Connection has dropped");
 			throw se;
 		} catch (Exception e) {
-			logger.warning(e.getMessage());
+			logger.error(e.getMessage());
 			throw new SubmitSmFailedException();
 		}
 
@@ -98,8 +100,7 @@ public class SmppsimSubmitSmTests extends TestCase {
 			UnbindResp response = session.unbind();
 			logger.info("Unbound...");
 		} catch (Exception e) {
-			logger.log(Level.WARNING, "Exception: " + e.getMessage(), e);
-			logger.warning(
+			logger.error(
 				"Unbind operation failed for TX session. " + e.getMessage());
 		}
 	}
@@ -128,8 +129,7 @@ public class SmppsimSubmitSmTests extends TestCase {
 			breq.setSystemType(smppSystemType);
 			resp = session.bind(breq);
 		} catch (Exception e) {
-			logger.log(Level.WARNING, "Exception: " + e.getMessage(), e);
-			logger.warning(
+			logger.error(
 				"Exception whilst setting up or executing bind transmitter. "
 					+ e.getMessage());
 			fail(
@@ -167,10 +167,10 @@ public class SmppsimSubmitSmTests extends TestCase {
 				Data.ESME_RINVDSTADR,
 				response.getCommandStatus());
 		} catch (SocketException se) {
-			logger.warning("Connection has dropped");
+			logger.error("Connection has dropped");
 			throw se;
 		} catch (Exception e) {
-			logger.warning(e.getMessage());
+			logger.error(e.getMessage());
 			throw new SubmitSmFailedException();
 		}
 
@@ -196,10 +196,10 @@ public class SmppsimSubmitSmTests extends TestCase {
 				Data.ESME_ROK,
 				response.getCommandStatus());
 		} catch (SocketException se) {
-			logger.warning("Connection has dropped");
+			logger.error("Connection has dropped");
 			throw se;
 		} catch (Exception e) {
-			logger.warning(e.getMessage());
+			logger.error(e.getMessage());
 			throw new SubmitSmFailedException();
 		}
 
@@ -207,8 +207,7 @@ public class SmppsimSubmitSmTests extends TestCase {
 		try {
 			UnbindResp response = session.unbind();
 		} catch (Exception e) {
-			logger.log(Level.WARNING, "Exception: " + e.getMessage(), e);
-			logger.warning(
+			logger.error(
 				"Unbind operation failed for TX session. " + e.getMessage());
 		}
 	}
@@ -233,8 +232,7 @@ public class SmppsimSubmitSmTests extends TestCase {
 			breq.setSystemType(smppSystemType);
 			resp = session.bind(breq);
 		} catch (Exception e) {
-			logger.log(Level.WARNING, "Exception: " + e.getMessage(), e);
-			logger.warning(
+			logger.error(
 				"Exception whilst setting up or executing bind transceiver. "
 					+ e.getMessage());
 			fail(
@@ -271,10 +269,10 @@ public class SmppsimSubmitSmTests extends TestCase {
 				Data.ESME_ROK,
 				response.getCommandStatus());
 		} catch (SocketException se) {
-			logger.warning("Connection has dropped");
+			logger.error("Connection has dropped");
 			throw se;
 		} catch (Exception e) {
-			logger.warning(e.getMessage());
+			logger.error(e.getMessage());
 			throw new SubmitSmFailedException();
 		}
 
@@ -299,9 +297,9 @@ public class SmppsimSubmitSmTests extends TestCase {
 
 					} else {
 						if (pdu instanceof EnquireLinkResp) {
-							logger.finer("EnquireLinkResp received");
+							logger.debug("EnquireLinkResp received");
 						} else {
-							logger.warning(
+							logger.error(
 								"Unexpected PDU of type: "
 									+ pdu.getClass().getName()
 									+ " received - discarding");
@@ -330,8 +328,7 @@ public class SmppsimSubmitSmTests extends TestCase {
 		try {
 			session.unbind();
 		} catch (Exception e) {
-			logger.log(Level.WARNING, "Exception: " + e.getMessage(), e);
-			logger.warning(
+			logger.error(
 				"Unbind operation failed for TX session. " + e.getMessage());
 		}
 	}
@@ -356,8 +353,7 @@ public class SmppsimSubmitSmTests extends TestCase {
 			breq.setSystemType(smppSystemType);
 			resp = session.bind(breq);
 		} catch (Exception e) {
-			logger.log(Level.WARNING, "Exception: " + e.getMessage(), e);
-			logger.warning(
+			logger.error(
 				"Exception whilst setting up or executing bind transmitter. "
 					+ e.getMessage());
 			fail(
@@ -392,18 +388,17 @@ public class SmppsimSubmitSmTests extends TestCase {
 				Data.ESME_ROK,
 				response.getCommandStatus());
 		} catch (SocketException se) {
-			logger.warning("Connection has dropped");
+			logger.error("Connection has dropped");
 			throw se;
 		} catch (Exception e) {
-			logger.warning(e.getMessage());
+			logger.error(e.getMessage());
 			throw new SubmitSmFailedException();
 		}
 		// Now unbind and disconnect ready for the next test
 		try {
 			session.unbind();
 		} catch (Exception e) {
-			logger.log(Level.WARNING, "Exception: " + e.getMessage(), e);
-			logger.warning(
+			logger.error(
 				"Unbind operation failed for TX session. " + e.getMessage());
 		}
 	}
@@ -428,8 +423,7 @@ public class SmppsimSubmitSmTests extends TestCase {
 			breq.setSystemType(smppSystemType);
 			resp = session.bind(breq);
 		} catch (Exception e) {
-			logger.log(Level.WARNING, "Exception: " + e.getMessage(), e);
-			logger.warning(
+			logger.error(
 				"Exception whilst setting up or executing bind transmitter. "
 					+ e.getMessage());
 			fail(
@@ -464,18 +458,17 @@ public class SmppsimSubmitSmTests extends TestCase {
 				Data.ESME_RINVDSTADR,
 				response.getCommandStatus());
 		} catch (SocketException se) {
-			logger.warning("Connection has dropped");
+			logger.error("Connection has dropped");
 			throw se;
 		} catch (Exception e) {
-			logger.warning(e.getMessage());
+			logger.error(e.getMessage());
 			throw new SubmitSmFailedException();
 		}
 		// Now unbind and disconnect ready for the next test
 		try {
 			session.unbind();
 		} catch (Exception e) {
-			logger.log(Level.WARNING, "Exception: " + e.getMessage(), e);
-			logger.warning(
+			logger.error(
 				"Unbind operation failed for TX session. " + e.getMessage());
 		}
 	}
@@ -500,8 +493,7 @@ public class SmppsimSubmitSmTests extends TestCase {
 			breq.setSystemType(smppSystemType);
 			resp = session.bind(breq);
 		} catch (Exception e) {
-			logger.log(Level.WARNING, "Exception: " + e.getMessage(), e);
-			logger.warning(
+			logger.error(
 				"Exception whilst setting up or executing bind transmitter. "
 					+ e.getMessage());
 			fail(
@@ -607,10 +599,10 @@ public class SmppsimSubmitSmTests extends TestCase {
 				Data.ESME_ROK,
 				response.getCommandStatus());
 		} catch (SocketException se) {
-			logger.warning("Connection has dropped");
+			logger.error("Connection has dropped");
 			throw se;
 		} catch (Exception e) {
-			logger.warning(e.getMessage());
+			logger.error(e.getMessage());
 			e.printStackTrace();
 			throw new SubmitSmFailedException();
 		}
@@ -620,8 +612,7 @@ public class SmppsimSubmitSmTests extends TestCase {
 			UnbindResp response = session.unbind();
 			logger.info("Unbound...");
 		} catch (Exception e) {
-			logger.log(Level.WARNING, "Exception: " + e.getMessage(), e);
-			logger.warning(
+			logger.error(
 				"Unbind operation failed for TX session. " + e.getMessage());
 		}
 	}

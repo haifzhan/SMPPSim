@@ -21,6 +21,30 @@
             <artifactId>jakarta-regexp</artifactId>
             <version>1.4</version>
         </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>0.9.27</version>
+        </dependency>
+        
+        <!--logback dependency-->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>0.9.27</version>
+        </dependency>
+        
+        <!--slf4j dependency-->        
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.6.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>1.6.1</version>
+        </dependency>
         
         <!--smpp dependency-->
         <dependency>
@@ -36,7 +60,7 @@
         </dependency>
     </dependencies>
     
-     <build>
+    <build>
         <plugins>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>

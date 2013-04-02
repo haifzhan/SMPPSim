@@ -28,9 +28,12 @@
 package com.seleniumsoftware.SMPPSim.pdu;
 
 import com.seleniumsoftware.SMPPSim.pdu.util.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BindTransmitter extends Request implements Demarshaller {
 
+    private static Logger logger = LoggerFactory.getLogger(BindTransmitter.class);
 	// PDU attributes
 
 	private String system_id;
@@ -60,7 +63,7 @@ public class BindTransmitter extends Request implements Demarshaller {
 					16, PduConstants.C_OCTET_STRING_TYPE);
 		} catch (Exception e) {
 			logger
-					.severe("BIND_TRANSMITTER PDU is malformed. system_id is incorrect");
+					.debug("BIND_TRANSMITTER PDU is malformed. system_id is incorrect");
 			throw (e);
 		}
 		inx = inx + system_id.length() + 1;
@@ -69,7 +72,7 @@ public class BindTransmitter extends Request implements Demarshaller {
 					9, PduConstants.C_OCTET_STRING_TYPE);
 		} catch (Exception e) {
 			logger
-					.severe("BIND_TRANSMITTER PDU is malformed. password is incorrect");
+					.debug("BIND_TRANSMITTER PDU is malformed. password is incorrect");
 			throw (e);
 		}
 		inx = inx + password.length() + 1;
@@ -78,7 +81,7 @@ public class BindTransmitter extends Request implements Demarshaller {
 					inx, 13, PduConstants.C_OCTET_STRING_TYPE);
 		} catch (Exception e) {
 			logger
-					.severe("BIND_TRANSMITTER PDU is malformed. system_type is incorrect");
+					.debug("BIND_TRANSMITTER PDU is malformed. system_type is incorrect");
 			throw (e);
 		}
 		inx = inx + system_type.length() + 1;
@@ -86,7 +89,7 @@ public class BindTransmitter extends Request implements Demarshaller {
 			interface_version = PduUtilities.getIntegerValue(request, inx, 1);
 		} catch (Exception e) {
 			logger
-					.severe("BIND_TRANSMITTER PDU is malformed. interface_version is incorrect");
+					.debug("BIND_TRANSMITTER PDU is malformed. interface_version is incorrect");
 			throw (e);
 		}
 		inx = inx + 1;
@@ -94,7 +97,7 @@ public class BindTransmitter extends Request implements Demarshaller {
 			addr_ton = PduUtilities.getIntegerValue(request, inx, 1);
 		} catch (Exception e) {
 			logger
-					.severe("BIND_TRANSMITTER PDU is malformed. addr_ton is incorrect");
+					.debug("BIND_TRANSMITTER PDU is malformed. addr_ton is incorrect");
 			throw (e);
 		}
 		inx = inx + 1;
@@ -102,7 +105,7 @@ public class BindTransmitter extends Request implements Demarshaller {
 			addr_npi = PduUtilities.getIntegerValue(request, inx, 1);
 		} catch (Exception e) {
 			logger
-					.severe("BIND_TRANSMITTER PDU is malformed. addr_npi is incorrect");
+					.debug("BIND_TRANSMITTER PDU is malformed. addr_npi is incorrect");
 			throw (e);
 		}
 		inx = inx + 1;
@@ -111,7 +114,7 @@ public class BindTransmitter extends Request implements Demarshaller {
 					inx, 41, PduConstants.C_OCTET_STRING_TYPE);
 		} catch (Exception e) {
 			logger
-					.severe("BIND_TRANSMITTER PDU is malformed. address_range is incorrect");
+					.debug("BIND_TRANSMITTER PDU is malformed. address_range is incorrect");
 			throw (e);
 		}
 	}

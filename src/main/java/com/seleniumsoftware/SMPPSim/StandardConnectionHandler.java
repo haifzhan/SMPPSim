@@ -28,12 +28,14 @@
 package com.seleniumsoftware.SMPPSim;
 import java.io.*;
 import java.net.*;
-import java.util.logging.*;
 
 import com.seleniumsoftware.SMPPSim.util.LoggingUtilities;
+import org.slf4j.LoggerFactory;
 
 public class StandardConnectionHandler implements Runnable {
-	private static Logger logger = Logger.getLogger("com.seleniumsoftware.smppsim");
+    private static org.slf4j.Logger logger = LoggerFactory.getLogger(StandardConnectionHandler.class);
+    
+//	private static Logger logger = Logger.getLogger("com.seleniumsoftware.smppsim");
 	private Smsc smsc = Smsc.getInstance();
 	private StandardProtocolHandler handler;
 	boolean isConnected = false;
@@ -79,17 +81,17 @@ public class StandardConnectionHandler implements Runnable {
 					logger.info(
 						"Protocol handler is of type " + handler.getName());
 				} catch (Exception exception) {
-					logger.warning(
+					logger.error(
 						"Exception processing connection: "
 							+ exception.getMessage());
-					logger.warning(
+					logger.error(
 						"Exception is of type: "
 							+ exception.getClass().getName());
 					exception.printStackTrace();
 					try {
 						socket.close();
 					} catch (Exception e) {
-						logger.warning(
+						logger.error(
 							"Could not close socket following exception");
 						e.printStackTrace();
 					}
@@ -99,13 +101,13 @@ public class StandardConnectionHandler implements Runnable {
 			do // until UNBIND or state violation
 				{
 				try {
-					logger.finest("at start of main loop");
+					logger.debug("at start of main loop");
 					readPacketInto(is);
 					smsc.writeBinarySme(message);
 					if(SMPPSim.isCallback() && smsc.isCallback_server_online()) {
 					   smsc.sent(response);
 					} 
-					logger.finest("read packet");
+					logger.debug("read packet");
 					handler.processMessage(message);
 				} catch (SocketException se) {
 					logger.info(
@@ -121,7 +123,7 @@ public class StandardConnectionHandler implements Runnable {
 					try {
 						socket.close();
 					} catch (Exception e) {
-						logger.warning(
+						logger.error(
 							"Could not close socket following exception");
 						e.printStackTrace();
 					}
@@ -129,7 +131,7 @@ public class StandardConnectionHandler implements Runnable {
 					isConnected = false;
 				}
 			} while (isConnected);
-			logger.finest("leaving connection handler main loop");
+			logger.debug("leaving connection handler main loop");
 		}
 		while (true);
 	}
@@ -161,16 +163,16 @@ public class StandardConnectionHandler implements Runnable {
 	}
 
 	private int readPacketInto(InputStream is) throws IOException {
-		logger.finest("starting readPacketInto");
+		logger.debug("starting readPacketInto");
 		// Read the length of the incoming packet...
 		int len;
 
-		logger.finest("reading cmd_len");
+		logger.debug("reading cmd_len");
 		packetLen[0] = (byte) is.read();
 		packetLen[1] = (byte) is.read();
 		packetLen[2] = (byte) is.read();
 		packetLen[3] = (byte) is.read();
-		logger.finest("Got cmd_len");
+		logger.debug("Got cmd_len");
 
 		//put that into the packet header
 		len =
@@ -180,11 +182,11 @@ public class StandardConnectionHandler implements Runnable {
 				| (getBytesAsInt(packetLen[3]));
 
 		if (packetLen[3] == -1) {
-			logger.warning("packetLen[3] == -1, throwing EOFException");
+			logger.error("packetLen[3] == -1, throwing EOFException");
 			throw new EOFException();
 		}
 
-		logger.finest("Reading " + len + " bytes");
+		logger.debug("Reading " + len + " bytes");
 
 		message = new byte[len];
 		message[0] = packetLen[0];
@@ -193,7 +195,7 @@ public class StandardConnectionHandler implements Runnable {
 		message[3] = packetLen[3];
 		for (int i = 4; i < len; i++)
 			message[i] = (byte) is.read();
-		logger.finest("exiting readPacketInto");
+		logger.debug("exiting readPacketInto");
 		return len;
 	}
 

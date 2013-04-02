@@ -34,13 +34,13 @@ import com.seleniumsoftware.SMPPSim.util.*;
 
 import java.util.*;
 import java.text.*;
-import java.util.logging.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.OutputStream;
 import java.net.*;
+import org.slf4j.LoggerFactory;
 
 public class Smsc {
 
@@ -52,7 +52,8 @@ public class Smsc {
 
 	private static boolean callback_server_online = false;
 
-	private static Logger logger = Logger.getLogger("com.seleniumsoftware.smppsim");
+    private static org.slf4j.Logger logger = LoggerFactory.getLogger(OutboundQueue.class);
+//	private static Logger logger = Logger.getLogger("com.seleniumsoftware.smppsim");
 
 	private static long message_id = 0;
 
@@ -248,7 +249,7 @@ public class Smsc {
 		try {
 			smpp_ss = new ServerSocket(SMPPSim.getSmppPort(), 10);
 		} catch (Exception e) {
-			logger.severe("Exception creating SMPP server: " + e.toString());
+			logger.debug("Exception creating SMPP server: " + e.toString());
 			e.printStackTrace();
 			throw e;
 		}
@@ -267,7 +268,7 @@ public class Smsc {
 		try {
 			css = new ServerSocket(SMPPSim.getHTTPPort(), 10);
 		} catch (Exception e) {
-			logger.warning("Exception creating HTTP server: " + e.toString());
+			logger.error("Exception creating HTTP server: " + e.toString());
 			e.printStackTrace();
 		}
 		Thread cthread[] = new Thread[SMPPSim.getHTTPThreads()];
@@ -386,8 +387,8 @@ public class Smsc {
 			return r;
 		}
 		logger
-				.severe("Laws of physics violated. Well laws of logic anyway. Fell through conditions in smsc.cancelSm");
-		logger.severe("Request is:" + q.toString());
+				.debug("Laws of physics violated. Well laws of logic anyway. Fell through conditions in smsc.cancelSm");
+		logger.debug("Request is:" + q.toString());
 		throw new InternalException(
 				"Laws of physics violated. Well laws of logic anyway. Fell through conditions in smsc.cancelSm");
 	}
@@ -476,7 +477,7 @@ public class Smsc {
 	public StandardConnectionHandler selectReceiver(String address) {
 		boolean gotReceiver = false;
 		int receiversChecked = 0;
-		logger.finest("Smsc: selectReceiver");
+		logger.debug("Smsc: selectReceiver");
 		do {
 			receiverIndex = getNextReceiverIndex();
 			if ((connectionHandlers[receiverIndex].isBound())
@@ -490,11 +491,11 @@ public class Smsc {
 		} while ((!gotReceiver)
 				&& (receiversChecked <= SMPPSim.getMaxConnectionHandlers()));
 
-		logger.finest("Smsc: Using SMPPReceiver object #" + receiverIndex);
+		logger.debug("Smsc: Using SMPPReceiver object #" + receiverIndex);
 		if (gotReceiver) {
 			return connectionHandlers[receiverIndex];
 		} else {
-			//logger.warning("Smsc: No receiver for message address to "+ address);
+			//logger.error("Smsc: No receiver for message address to "+ address);
 			return null;
 		}
 	}
@@ -531,7 +532,7 @@ public class Smsc {
 			outbindOK++;
 			outbind_sent = true;
 		} catch (Exception e) {
-			logger.warning("Attempted outbind failed. Check IP address and port are correct for outbind. Exception of type "+e.getClass().getName());
+			logger.error("Attempted outbind failed. Check IP address and port are correct for outbind. Exception of type "+e.getClass().getName());
 			outbindERR++;
 		}
 	}
@@ -562,7 +563,7 @@ public class Smsc {
 			receipt.addVsop(SMPPSim.getDlr_tlv_tag(), SMPPSim.getDlr_tlv_len(), SMPPSim.getDlr_tlv_value());
 		}
 		
-		logger.finest("sm_len=" + smppmsg.getSm_length() + ",message="
+		logger.debug("sm_len=" + smppmsg.getSm_length() + ",message="
 				+ smppmsg.getShort_message());
 		if (smppmsg.getSm_length() > 19)
 			receipt.setText(new String(smppmsg.getShort_message(),0, 20));
@@ -578,7 +579,7 @@ public class Smsc {
 				drq.delayDeliveryReceipt(receipt);
 			}
 		} catch (InboundQueueFullException e) {
-			//logger.warning("Failed to create delivery receipt because the Inbound Queue is full");
+			//logger.error("Failed to create delivery receipt because the Inbound Queue is full");
 		}
 	}
 
@@ -594,7 +595,7 @@ public class Smsc {
 	public byte[] processDeliveryReceipt(DeliveryReceipt smppmsg)
 			throws Exception {
 		byte[] message;
-		logger.finest(": DELIVER_SM (receipt)");
+		logger.debug(": DELIVER_SM (receipt)");
 		message = smppmsg.marshall();
 		LoggingUtilities.hexDump("DELIVER_SM (receipt):", message,
 				message.length);
@@ -1141,7 +1142,7 @@ public class Smsc {
 	}
 
 	private void callback(byte[] pdu, byte[] type) {
-		logger.finest("callback - start of operation");
+		logger.debug("callback - start of operation");
 		if (pdu == null)
 			return;
 		if (type == null)
@@ -1183,7 +1184,7 @@ public class Smsc {
 				}
 			}
 		}
-		logger.finest("callback - end of operation");
+		logger.debug("callback - end of operation");
 	}
 
 	public static synchronized boolean isCallback_server_online() {

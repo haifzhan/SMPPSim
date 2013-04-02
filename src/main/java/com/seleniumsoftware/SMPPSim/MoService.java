@@ -30,13 +30,16 @@ package com.seleniumsoftware.SMPPSim;
 
 import com.seleniumsoftware.SMPPSim.exceptions.InvalidHexStringlException;
 import com.seleniumsoftware.SMPPSim.pdu.*;
+import org.slf4j.Logger;
 
-import java.util.logging.*;
+import org.slf4j.LoggerFactory;
 
 public class MoService implements Runnable {
 
-	private static Logger logger = Logger.getLogger("com.seleniumsoftware.smppsim");
+//	private static Logger logger = Logger.getLogger("com.seleniumsoftware.smppsim");
 
+    private static Logger logger = LoggerFactory.getLogger(MoService.class);
+    
 	private Smsc smsc = Smsc.getInstance();
 
 	private int messagesPerMin;
@@ -57,7 +60,7 @@ public class MoService implements Runnable {
 		try {
 			messages = new MoMessagePool(deliveryFile);
 		} catch (Exception e) {
-			logger.warning("Exception creating MoMessagePool. "
+			logger.error("Exception creating MoMessagePool. "
 					+ e.getMessage());
 			e.printStackTrace();
 		}
@@ -65,7 +68,7 @@ public class MoService implements Runnable {
 		try {
 			runMoService();
 		} catch (Exception e) {
-			logger.warning("MO Service threw an Exception:" + e.getMessage()
+			logger.error("MO Service threw an Exception:" + e.getMessage()
 					+ ". It's game over");
 		}
 	}
@@ -85,7 +88,7 @@ public class MoService implements Runnable {
 			newMessage = messages.getMessage();
 			newMessage.setSm_length(newMessage.getShort_message().length);
 			newMessage.setSeq_no(smsc.getNextSequence_No());
-			logger.finest("MoService: DeliverSM object:"
+			logger.debug("MoService: DeliverSM object:"
 					+ newMessage.toString());
 			smsc.getIq().addMessage(newMessage);
 			count++;
@@ -100,7 +103,7 @@ public class MoService implements Runnable {
 				minCount = 0;
 			}
 			try {
-				logger.finest("MO Service is sleeping for " + sleepMS
+				logger.debug("MO Service is sleeping for " + sleepMS
 						+ " milliseconds");
 				Thread.sleep(sleepMS);
 			} catch (Exception e) {

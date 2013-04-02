@@ -31,12 +31,14 @@ import com.seleniumsoftware.SMPPSim.pdu.*;
 
 import java.text.ParseException;
 import java.util.*;
-import java.util.logging.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MessageState {
-	private static Logger logger = Logger
-			.getLogger("com.seleniumsoftware.smppsim");
+//	private static Logger logger = Logger
+//			.getLogger("com.seleniumsoftware.smppsim");
 
+    private static Logger logger = LoggerFactory.getLogger(MessageState.class);
 	// key
 	private String message_id;
 
@@ -92,13 +94,13 @@ public class MessageState {
 				//logger.info("Generated default validity period=" + st);
 			}
 		} catch (ParseException e) {
-			logger.warning("Could not parse validity period : using default of 5 minutes");
+			logger.error("Could not parse validity period : using default of 5 minutes");
 			long vtime = System.currentTimeMillis() + 300000;
 			Date vdate = new Date(vtime);
 			try {
 				validity_period = new SmppTime(SmppTime.dateToSMPPString(vdate));
 			} catch (ParseException e2) {
-				logger.severe("Internal error: could not set default validity period due to parse error");
+				logger.error("Internal error: could not set default validity period due to parse error");
 			}
 		}
 	}
@@ -283,7 +285,7 @@ public class MessageState {
 		try {
 			finalDate = new SmppTime(stime);
 		} catch (ParseException e) {
-			logger.warning("ParseException - this should be impossible");
+			logger.error("ParseException - this should be impossible");
 			finalDate = null;
 		}
 	}

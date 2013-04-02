@@ -29,8 +29,12 @@ package com.seleniumsoftware.SMPPSim.pdu;
 
 import com.seleniumsoftware.SMPPSim.Smsc;
 import com.seleniumsoftware.SMPPSim.pdu.util.*;
+import org.slf4j.LoggerFactory;
 
 public class Outbind extends Response implements Marshaller {
+
+    
+    private static org.slf4j.Logger logger = LoggerFactory.getLogger(Outbind.class);
 
 	private Smsc smsc = Smsc.getInstance();
 
@@ -55,11 +59,11 @@ public class Outbind extends Response implements Marshaller {
 	public byte[] marshall() throws Exception {
 		out.reset();
 		super.prepareHeaderForMarshalling();
-		logger.finest("Prepared header for marshalling");
+		logger.debug("Prepared header for marshalling");
 		out.write(PduUtilities.stringToNullTerminatedByteArray(system_id));
-		logger.finest("marshalled system_id");
+		logger.debug("marshalled system_id");
 		out.write(PduUtilities.stringToNullTerminatedByteArray(password));
-		logger.finest("marshalled password");
+		logger.debug("marshalled password");
 		byte[] response = out.toByteArray();
 		int l = response.length;
 		response = PduUtilities.setPduLength(response, l);

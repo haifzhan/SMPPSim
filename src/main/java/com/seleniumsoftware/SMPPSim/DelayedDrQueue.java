@@ -29,17 +29,19 @@ package com.seleniumsoftware.SMPPSim;
 import com.seleniumsoftware.SMPPSim.exceptions.InboundQueueFullException;
 import com.seleniumsoftware.SMPPSim.pdu.*;
 
-import java.util.logging.*;
 import java.util.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DelayedDrQueue implements Runnable {
 
 	private static DelayedDrQueue drqueue;
 
-	private static Logger logger = Logger
-			.getLogger("com.seleniumsoftware.smppsim");
-
-	private Smsc smsc = Smsc.getInstance();
+//	private static Logger logger = Logger
+//			.getLogger("com.seleniumsoftware.smppsim");
+    private static Logger logger = LoggerFactory.getLogger(CallbackServerConnector.class);
+	
+    private Smsc smsc = Smsc.getInstance();
 
 	private InboundQueue iqueue = InboundQueue.getInstance();
 
@@ -63,11 +65,11 @@ public class DelayedDrQueue implements Runnable {
 	public void delayDeliveryReceipt(DeliveryReceipt pdu) {
 		synchronized (dr_queue_pdus) {
 			if (!dr_queue_pdus.contains(pdu)) {
-				logger.finest("DelayedDrQueue: adding object to queue<"
+				logger.debug("DelayedDrQueue: adding object to queue<"
 						+ pdu.toString() + ">");
 				dr_queue_pdus.add(pdu);
 			}
-			logger.finest("DelayedDrQueue: now contains " + dr_queue_pdus.size()
+			logger.debug("DelayedDrQueue: now contains " + dr_queue_pdus.size()
 					+ " object(s)");
 		}
 	}
@@ -84,7 +86,7 @@ public class DelayedDrQueue implements Runnable {
 			} catch (InterruptedException e) {
 			}
 			int dcount = dr_queue_pdus.size();
-			logger.finest("Processing " + dcount
+			logger.debug("Processing " + dcount
 					+ " messages in the delayed DR queue");
 
 			synchronized (dr_queue_pdus) {
@@ -95,7 +97,7 @@ public class DelayedDrQueue implements Runnable {
 						long earliest_delivery_time = (dsm.getCreated()+delay_ms);
 						long now = System.currentTimeMillis();
 						long diff = earliest_delivery_time - now;
-						//logger.finest("Considering delivery receipt: "+(diff/1000)+" seconds to go");
+						//logger.debug("Considering delivery receipt: "+(diff/1000)+" seconds to go");
 						if (earliest_delivery_time < now) {
 							iqueue.addMessage(mo);
 							dr_queue_pdus.remove(mo);

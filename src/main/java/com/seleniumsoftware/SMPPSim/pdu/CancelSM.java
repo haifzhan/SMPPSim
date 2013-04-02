@@ -27,10 +27,14 @@
 
 package com.seleniumsoftware.SMPPSim.pdu;
 
+import com.seleniumsoftware.SMPPSim.SMPPSim;
 import com.seleniumsoftware.SMPPSim.pdu.util.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CancelSM extends Request implements Demarshaller {
 
+    private static Logger logger = LoggerFactory.getLogger(CancelSM.class);
 	// PDU attributes
 
 	private String service_type;
@@ -60,7 +64,7 @@ public class CancelSM extends Request implements Demarshaller {
 					inx, 6, PduConstants.C_OCTET_STRING_TYPE);
 		} catch (Exception e) {
 			logger
-					.severe("CANCEL_SM PDU is malformed. service_type is incorrect");
+					.debug("CANCEL_SM PDU is malformed. service_type is incorrect");
 			throw (e);
 		}
 		inx = inx + service_type.length() + 1;
@@ -69,7 +73,7 @@ public class CancelSM extends Request implements Demarshaller {
 					request, inx, 65, PduConstants.C_OCTET_STRING_TYPE);
 		} catch (Exception e) {
 			logger
-					.severe("CANCEL_SM PDU is malformed. original_message_id is incorrect");
+					.debug("CANCEL_SM PDU is malformed. original_message_id is incorrect");
 			throw (e);
 		}
 		inx = inx + original_message_id.length() + 1;
@@ -77,7 +81,7 @@ public class CancelSM extends Request implements Demarshaller {
 			source_addr_ton = PduUtilities.getIntegerValue(request, inx, 1);
 		} catch (Exception e) {
 			logger
-					.severe("CANCEL_SM PDU is malformed. source_addr_ton is incorrect");
+					.debug("CANCEL_SM PDU is malformed. source_addr_ton is incorrect");
 			throw (e);
 		}
 		inx = inx + 1;
@@ -85,7 +89,7 @@ public class CancelSM extends Request implements Demarshaller {
 			source_addr_npi = PduUtilities.getIntegerValue(request, inx, 1);
 		} catch (Exception e) {
 			logger
-					.severe("CANCEL_SM PDU is malformed. source_addr_npi is incorrect");
+					.debug("CANCEL_SM PDU is malformed. source_addr_npi is incorrect");
 			throw (e);
 		}
 		inx = inx + 1;
@@ -94,7 +98,7 @@ public class CancelSM extends Request implements Demarshaller {
 					inx, 21, PduConstants.C_OCTET_STRING_TYPE);
 		} catch (Exception e) {
 			logger
-					.severe("CANCEL_SM PDU is malformed. source_addr is incorrect");
+					.debug("CANCEL_SM PDU is malformed. source_addr is incorrect");
 			throw (e);
 		}
 		inx = inx + source_addr.length() + 1;
@@ -102,7 +106,7 @@ public class CancelSM extends Request implements Demarshaller {
 			dest_addr_ton = PduUtilities.getIntegerValue(request, inx, 1);
 		} catch (Exception e) {
 			logger
-					.severe("CANCEL_SM PDU is malformed. dest_addr_ton is incorrect");
+					.debug("CANCEL_SM PDU is malformed. dest_addr_ton is incorrect");
 			throw (e);
 		}
 		inx = inx + 1;
@@ -110,7 +114,7 @@ public class CancelSM extends Request implements Demarshaller {
 			dest_addr_npi = PduUtilities.getIntegerValue(request, inx, 1);
 		} catch (Exception e) {
 			logger
-					.severe("CANCEL_SM PDU is malformed. dest_addr_npi is incorrect");
+					.debug("CANCEL_SM PDU is malformed. dest_addr_npi is incorrect");
 			throw (e);
 		}
 		inx = inx + 1;
@@ -119,7 +123,7 @@ public class CancelSM extends Request implements Demarshaller {
 					request, inx, 21, PduConstants.C_OCTET_STRING_TYPE);
 		} catch (Exception e) {
 			logger
-					.severe("CANCEL_SM PDU is malformed. destination_addr is incorrect");
+					.debug("CANCEL_SM PDU is malformed. destination_addr is incorrect");
 			throw (e);
 		}
 		inx = inx + destination_addr.length() + 1;

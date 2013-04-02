@@ -28,9 +28,11 @@
 package com.seleniumsoftware.SMPPSim.pdu;
 
 import com.seleniumsoftware.SMPPSim.pdu.util.*;
+import org.slf4j.LoggerFactory;
 
 public class QuerySM extends Request implements Demarshaller {
 
+       private static org.slf4j.Logger logger = LoggerFactory.getLogger(QuerySM.class);
 	// PDU attributes
 
 	private String original_message_id;
@@ -52,7 +54,7 @@ public class QuerySM extends Request implements Demarshaller {
 					request, inx, 65, PduConstants.C_OCTET_STRING_TYPE);
 		} catch (Exception e) {
 			logger
-					.severe("QUERY_SM PDU is malformed. original_message_id is incorrect");
+					.debug("QUERY_SM PDU is malformed. original_message_id is incorrect");
 			throw (e);
 		}
 		inx = inx + original_message_id.length() + 1;
@@ -60,7 +62,7 @@ public class QuerySM extends Request implements Demarshaller {
 			originating_ton = PduUtilities.getIntegerValue(request, inx, 1);
 		} catch (Exception e) {
 			logger
-					.severe("QUERY_SM PDU is malformed. originating_ton is incorrect");
+					.debug("QUERY_SM PDU is malformed. originating_ton is incorrect");
 			throw (e);
 		}
 		inx = inx + 1;
@@ -68,7 +70,7 @@ public class QuerySM extends Request implements Demarshaller {
 			originating_npi = PduUtilities.getIntegerValue(request, inx, 1);
 		} catch (Exception e) {
 			logger
-					.severe("QUERY_SM PDU is malformed. originating_npi is incorrect");
+					.debug("QUERY_SM PDU is malformed. originating_npi is incorrect");
 			throw (e);
 		}
 		inx = inx + 1;
@@ -77,7 +79,7 @@ public class QuerySM extends Request implements Demarshaller {
 					request, inx, 21, PduConstants.C_OCTET_STRING_TYPE);
 		} catch (Exception e) {
 			logger
-					.severe("QUERY_SM PDU is malformed. originating_npi is incorrect");
+					.debug("QUERY_SM PDU is malformed. originating_npi is incorrect");
 			throw (e);
 		}
 		inx = inx + originating_addr.length() + 1;

@@ -32,12 +32,15 @@ import com.seleniumsoftware.SMPPSim.pdu.*;
 import com.seleniumsoftware.SMPPSim.util.Utilities;
 
 import java.util.*;
-import java.util.logging.*;
 import java.io.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MoMessagePool {
 
-	private static Logger logger = Logger.getLogger("com.seleniumsoftware.smppsim");
+    private static Logger logger = LoggerFactory.getLogger(MoMessagePool.class);
+    
+//	private static Logger logger = Logger.getLogger("com.seleniumsoftware.smppsim");
 
 	private Vector<DeliverSM> messages;
 
@@ -63,7 +66,7 @@ public class MoMessagePool {
 		try {
 			messagesReader = new BufferedReader(new FileReader(filename));
 		} catch (FileNotFoundException fnfe) {
-			logger.warning("MoMessagePool: file not found: " + filename);
+			logger.error("MoMessagePool: file not found: " + filename);
 			fnfe.printStackTrace();
 		}
 
@@ -75,16 +78,16 @@ public class MoMessagePool {
 					therecord = "null";
 				else
 					therecord = record;
-				logger.finest("Read from file:<" + therecord + ">");
+				logger.debug("Read from file:<" + therecord + ">");
 				if (record != null) {
 					msg = new DeliverSM();
 					try {
 						getMessageAttributes(record);
 					} catch (Exception e) {
 						logger
-								.warning("Error processing delivery_messages file, record number"
+								.error("Error processing delivery_messages file, record number"
 										+ (recno + 1));
-						logger.warning(e.getMessage());
+						logger.error(e.getMessage());
 						e.printStackTrace();
 						continue;
 					}
@@ -94,16 +97,16 @@ public class MoMessagePool {
 					msg.setData_coding(data_coding);
 					messages.add(msg);
 					recno++;
-					logger.finest("Added delivery_message: " + source_addr
+					logger.debug("Added delivery_message: " + source_addr
 							+ "," + destination_addr + "," + short_message);
 				}
 			} catch (Exception e) {
-				logger.warning("Error processing delivery_messages file");
+				logger.error("Error processing delivery_messages file");
 				logger.info(e.getMessage());
 				e.printStackTrace();
 			}
 		} while (record != null);
-		logger.finest("loaded " + recno + " delivery messages");
+		logger.debug("loaded " + recno + " delivery messages");
 	}
 
 	private void getMessageAttributes(String rec) throws Exception {
@@ -125,7 +128,7 @@ public class MoMessagePool {
 						short_message = Utilities.getByteArrayFromHexString(msg.substring(2));
 						data_coding = 4; // binary
 					} catch (InvalidHexStringlException e) {
-						logger.warning("Invalid hex string in MO service input file: <"+msg+">. Used as plain text instead.");
+						logger.error("Invalid hex string in MO service input file: <"+msg+">. Used as plain text instead.");
 						short_message = msg.getBytes();
 					}
 				}
@@ -143,7 +146,7 @@ public class MoMessagePool {
 
 	protected DeliverSM getMessage() {
 		int messageIX = (int) (Math.random() * recno);
-		logger.finest("Selected delivery_message #" + messageIX);
+		logger.debug("Selected delivery_message #" + messageIX);
 		DeliverSM dsm = new DeliverSM();
 		DeliverSM selected = messages.elementAt(messageIX);
 		;

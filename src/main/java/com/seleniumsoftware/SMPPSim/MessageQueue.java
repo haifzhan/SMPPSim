@@ -29,10 +29,13 @@ package com.seleniumsoftware.SMPPSim;
 import com.seleniumsoftware.SMPPSim.pdu.*;
 
 import java.util.*;
-import java.util.logging.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MessageQueue {
-	private static Logger logger = Logger.getLogger("com.seleniumsoftware.smppsim");
+    
+    private static Logger logger = LoggerFactory.getLogger(MessageQueue.class);
+//	private static Logger logger = Logger.getLogger("com.seleniumsoftware.smppsim");
 	private String queueName;
 	private Vector<Pdu> queue;
 	private Object message = new Object();
@@ -43,7 +46,7 @@ public class MessageQueue {
 	}
 
 	protected synchronized void addMessage(Pdu message) {
-		logger.finest(
+		logger.debug(
 			"MessageQueue(" + queueName + ") : adding message to queue");
 		queue.add(message);
 		notifyAll();
@@ -52,13 +55,13 @@ public class MessageQueue {
 	protected synchronized Object getMessage() {
 		while (isEmpty()) {
 			try {
-				logger.finest(
+				logger.debug(
 					"MessageQueue("
 						+ queueName
 						+ "):  waiting for message from queue");
 				wait();
 			} catch (InterruptedException e) {
-				logger.warning(
+				logger.error(
 					"Exception in MessageQueue("
 						+ queueName
 						+ ") : "

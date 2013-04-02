@@ -27,10 +27,11 @@
 
 package com.seleniumsoftware.SMPPSim.pdu;
 import com.seleniumsoftware.SMPPSim.pdu.util.*;
+import org.slf4j.LoggerFactory;
 
 public class DeliverSMResp extends Request implements Demarshaller {
 
-
+  private static org.slf4j.Logger logger = LoggerFactory.getLogger(DeliverSMResp.class);
 	// PDU attributes
 
 	private String message_id;
@@ -44,7 +45,7 @@ public class DeliverSMResp extends Request implements Demarshaller {
 		try {
 			message_id = PduUtilities.getStringValueFixedLength(request, inx, 1);
 		} catch (Exception e) {
-			logger.severe("DELIVER_SM_RESP PDU is malformed. message_id is incorrect");
+			logger.debug("DELIVER_SM_RESP PDU is malformed. message_id is incorrect");
 			throw (e);
 		}
 

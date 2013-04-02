@@ -33,11 +33,12 @@ import com.seleniumsoftware.SMPPSim.pdu.*;
 import com.seleniumsoftware.SMPPSim.pdu.util.PduUtilities;
 import com.seleniumsoftware.SMPPSim.util.Utilities;
 
-import java.util.logging.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.text.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class <code>HttpHandler</code> is a very simple http server which provides
@@ -47,9 +48,11 @@ import java.text.*;
  */
 
 public class HttpHandler implements Runnable {
-	private static Logger logger = Logger
-			.getLogger("com.seleniumsoftware.smppsim");
+//	private static Logger logger = Logger
+//			.getLogger("com.seleniumsoftware.smppsim");
 
+    private static Logger logger = LoggerFactory.getLogger(DeterministicLifeCycleManager.class);
+    
 	private Smsc smsc = Smsc.getInstance();
 
 	private DeliverSM newMessage;
@@ -388,7 +391,7 @@ public class HttpHandler implements Runnable {
 		while (st.hasMoreElements()) {
 			authorisedFiles.add(st.nextToken());
 		}
-		logger.finest("Creating HttpHandler for docRoot " + docRootName);
+		logger.debug("Creating HttpHandler for docRoot " + docRootName);
 	}
 
 	public void run() {
@@ -406,31 +409,27 @@ public class HttpHandler implements Runnable {
 		do // process connections forever.... or less
 		{
 			try {
-				logger.finest("HttpHandler thread is waiting for connection");
+				logger.debug("HttpHandler thread is waiting for connection");
 				socket = smsc.getCss().accept();
-				logger.finest("accepted connection");
+				logger.debug("accepted connection");
 			} catch (IOException e) {
-				logger.log(Level.WARNING, "Exception: " + e.getMessage(), e);
-				logger.warning("exception accepting connection");
+				logger.error("exception accepting connection");
 			}
 			try {
 				is = new BufferedReader(new InputStreamReader(socket
 						.getInputStream()));
 			} catch (IOException e) {
-				logger.log(Level.WARNING, "Exception: " + e.getMessage(), e);
-				logger.warning("failure getting input stream");
+				logger.error("failure getting input stream");
 			}
 			try {
 				os = socket.getOutputStream();
 			} catch (IOException e) {
-				logger.log(Level.WARNING, "Exception: " + e.getMessage(), e);
-				logger.warning("failure getting output stream");
+				logger.error("failure getting output stream");
 			}
 			try {
 				request = readRequest(is);
 			} catch (Exception e) {
-				logger.log(Level.WARNING, "Exception: " + e.getMessage(), e);
-				logger.warning("failure getting request string");
+				logger.error("failure getting request string");
 			}
 
 			response = processRequest(request);
@@ -444,8 +443,7 @@ public class HttpHandler implements Runnable {
 			try {
 				closeConnection(socket, os);
 			} catch (Exception e) {
-				logger.log(Level.WARNING, "Exception: " + e.getMessage(), e);
-				logger.warning("failed closing connection");
+				logger.error("failed closing connection");
 			}
 		} while (running);
 		logger.info("Halting http server thread ");
@@ -456,8 +454,8 @@ public class HttpHandler implements Runnable {
 		String filename;
 		String command;
 
-		logger.finest("in processHTTPRequest");
-		logger.finest("HTTP Request=" + target);
+		logger.debug("in processHTTPRequest");
+		logger.debug("HTTP Request=" + target);
 
 		int qmark = target.indexOf("?");
 		if (qmark > -1) {
@@ -467,7 +465,7 @@ public class HttpHandler implements Runnable {
 			filename = target.substring(0, target.length());
 			command = "implicit-refresh";
 		}
-		logger.finest("Filename=" + filename);
+		logger.debug("Filename=" + filename);
 
 		boolean authorisedFile = false;
 
@@ -480,7 +478,7 @@ public class HttpHandler implements Runnable {
 				authorisedFile = true;
 				command = "inject";
 			} else
-				logger.finest("Unauthorised file <" + filename
+				logger.debug("Unauthorised file <" + filename
 						+ "> requested - ignoring request");
 		}
 
@@ -512,12 +510,12 @@ public class HttpHandler implements Runnable {
 			command = "plain-get";
 
 		if (filename.equals(SMPPSim.getInjectMoPage())) {
-			logger.finest("The InjectMO page has been requested");
+			logger.debug("The InjectMO page has been requested");
 			command = "implicit-refresh";
 		}
 
-		logger.finest("Generated requestedFile:" + requestedFile);
-		logger.finest("Processing command:" + command);
+		logger.debug("Generated requestedFile:" + requestedFile);
+		logger.debug("Processing command:" + command);
 		try {
 			if (command.equalsIgnoreCase("plain-get")) {
 				return plainResponse(requestedFile);
@@ -553,8 +551,7 @@ public class HttpHandler implements Runnable {
 			}
 
 		} catch (IOException ioe) {
-			logger.log(Level.WARNING, "Exception: " + ioe.getMessage(), ioe);
-			logger.warning("IOException preparing http response: "
+			logger.error("IOException preparing http response: "
 					+ ioe.getMessage());
 			responseOK = false;
 			return http500Response;
@@ -574,24 +571,21 @@ public class HttpHandler implements Runnable {
 		if (filename.indexOf("..") != -1)
 			return null;
 		requestedFile = new File(docRootName + filename);
-		logger.finest("requestedFile=" + requestedFile.getName());
+		logger.debug("requestedFile=" + requestedFile.getName());
 		if (requestedFile.exists() && requestedFile.isDirectory()) {
 
-			logger.finest("Requested file exists and is a directory");
+			logger.debug("Requested file exists and is a directory");
 			// If a directory was requested, modify the request
 			// to look for the default file in that
 			// directory.
 			String defaultFile = docRootName + "index.htm";
-			logger.finest("defaultFile=" + defaultFile);
+			logger.debug("defaultFile=" + defaultFile);
 			requestedFile = new File(defaultFile);
 			try {
-				logger.finest("Requested file got set to default of:"
+				logger.debug("Requested file got set to default of:"
 						+ requestedFile.getCanonicalPath());
 			} catch (IOException ioe) {
-				logger
-						.log(Level.WARNING, "Exception: " + ioe.getMessage(),
-								ioe);
-				logger.warning("IOException: " + ioe.getMessage());
+				logger.error("IOException: " + ioe.getMessage());
 			}
 		}
 
@@ -610,7 +604,7 @@ public class HttpHandler implements Runnable {
 			if (requestedFile.getAbsolutePath().endsWith(".htm")) {
 				contentType="text/html";
 			}
-			logger.finest("Content Type thought to be:" + contentType);
+			logger.debug("Content Type thought to be:" + contentType);
 			byte[] headerBytes = createHeaderBytes("HTTP/1.0 200 OK", fileLen,
 					contentType);
 			bOut.write(headerBytes);
@@ -627,14 +621,14 @@ public class HttpHandler implements Runnable {
 		}
 		bOut.flush();
 		bOut.close();
-		logger.finest("response prepared - just params to deal with now");
+		logger.debug("response prepared - just params to deal with now");
 		return replaceParams(bOut).getBytes();
 	}
 
 	private String replaceParams(ByteArrayOutputStream bOut) {
-		logger.finest("In replaceParams");
+		logger.debug("In replaceParams");
 		String rawFile = bOut.toString();
-		// logger.finest(rawFile);
+		// logger.debug(rawFile);
 		boolean done = false;
 		int paramStart = 0;
 		int paramEnd = 0;
@@ -646,7 +640,7 @@ public class HttpHandler implements Runnable {
 			paramStart = rawFile.indexOf(delim, p);
 			if (paramStart > -1) {
 				paramEnd = rawFile.indexOf(delim, paramStart + 2) + 2;
-				logger.finest("Found param end at " + paramEnd);
+				logger.debug("Found param end at " + paramEnd);
 				if ((paramStart > -1) && (paramEnd > -1)) {
 					sb.append(rawFile.substring(p, paramStart));
 					param = rawFile.substring(paramStart, paramEnd);
@@ -664,7 +658,7 @@ public class HttpHandler implements Runnable {
 	}
 
 	private String getParamValue(String paramName) {
-		logger.finest("Getting param value for <" + paramName + ">");
+		logger.debug("Getting param value for <" + paramName + ">");
 
 		if (paramName.equals(MESSAGE))
 			return controlPanelMessage;
@@ -860,12 +854,12 @@ public class HttpHandler implements Runnable {
 	private byte[] injectMo(String message) {
 		try {
 			newMessage = parseMoInjectForm(message);
-			logger.finest("made DeliverSM object");
+			logger.debug("made DeliverSM object");
 			smsc.getIq().addMessage(newMessage);
 			controlPanelMessage = "Message added to SMPPSim InboundQueue OK";
 		} catch (InvalidHexStringlException ihse) {
 		} catch (Exception e) {
-			logger.warning(e.getMessage());
+			logger.error(e.getMessage());
 			e.printStackTrace();
 			return http400Response;
 		}
@@ -915,7 +909,7 @@ public class HttpHandler implements Runnable {
 
 		i = tmpMessage.indexOf("?");
 		tmpMessage = tmpMessage.substring(i + 1, l);
-		logger.finest("HTTP args:" + tmpMessage);
+		logger.debug("HTTP args:" + tmpMessage);
 
 		StringTokenizer st = new StringTokenizer(tmpMessage, " &\t\n", false);
 		while (st.hasMoreTokens()) {
@@ -939,7 +933,7 @@ public class HttpHandler implements Runnable {
 			}
 		}
 
-		logger.finest("HTTPHandler: extracted args from GET: "
+		logger.debug("HTTPHandler: extracted args from GET: "
 				+ args.toString());
 
 		if (args.containsKey("data_coding")) {
@@ -1246,7 +1240,7 @@ public class HttpHandler implements Runnable {
 					new FileInputStream(requestedFile));
 			String contentType = URLConnection
 					.guessContentTypeFromStream(fileIn);
-			logger.finest("Content Type thought to be:" + contentType);
+			logger.debug("Content Type thought to be:" + contentType);
 			byte[] headerBytes = createHeaderBytes("HTTP/1.0 200 OK", fileLen,
 					contentType);
 			bOut.write(headerBytes);
@@ -1271,7 +1265,7 @@ public class HttpHandler implements Runnable {
 		if ((requestLine == null) || (requestLine.length() < 1)) {
 			throw new IOException("could not read request");
 		}
-		logger.finest("Received HTTP message:" + requestLine);
+		logger.debug("Received HTTP message:" + requestLine);
 		StringTokenizer st = new StringTokenizer(requestLine);
 		String uri = null;
 
@@ -1283,7 +1277,7 @@ public class HttpHandler implements Runnable {
 		} catch (NoSuchElementException x) {
 			throw new IOException("could not parse request line");
 		}
-		logger.finest("uri=" + uri);
+		logger.debug("uri=" + uri);
 		return uri;
 	}
 

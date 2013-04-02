@@ -27,12 +27,14 @@
 
 package com.seleniumsoftware.SMPPSim;
 import com.seleniumsoftware.SMPPSim.pdu.*;
+import org.slf4j.Logger;
 
-import java.util.logging.*;
+import org.slf4j.LoggerFactory;
 
 public class LifeCycleManager {
 
-	private static Logger logger = Logger.getLogger("com.seleniumsoftware.smppsim");
+    private static Logger logger = LoggerFactory.getLogger(LifeCycleManager.class);
+//	private static Logger logger = Logger.getLogger("com.seleniumsoftware.smppsim");
 	private Smsc smsc = Smsc.getInstance();
 	private double transitionThreshold;
 	private double deliveredThreshold;
@@ -48,26 +50,26 @@ public class LifeCycleManager {
 	public LifeCycleManager() {
 		double a = (double) SMPPSim.getPercentageThatTransition() + 1.0;
 		transitionThreshold =  (a / 100);
-		logger.finest("transitionThreshold="+transitionThreshold);
-		logger.finest("SMPPSim.getPercentageThatTransition()="+SMPPSim.getPercentageThatTransition());
+		logger.debug("transitionThreshold="+transitionThreshold);
+		logger.debug("SMPPSim.getPercentageThatTransition()="+SMPPSim.getPercentageThatTransition());
 		maxTimeEnroute = SMPPSim.getMaxTimeEnroute();
-		logger.finest("maxTimeEnroute="+maxTimeEnroute);
+		logger.debug("maxTimeEnroute="+maxTimeEnroute);
 		discardThreshold = SMPPSim.getDiscardFromQueueAfter();
-		logger.finest("discardThreshold="+discardThreshold);
+		logger.debug("discardThreshold="+discardThreshold);
 		deliveredThreshold = ((double) SMPPSim.getPercentageDelivered() / 100);
-		logger.finest("deliveredThreshold="+deliveredThreshold);
+		logger.debug("deliveredThreshold="+deliveredThreshold);
 		// .90
 		undeliverableThreshold =
 			deliveredThreshold + ((double) SMPPSim.getPercentageUndeliverable() / 100);
-		logger.finest("undeliverableThreshold="+undeliverableThreshold);
+		logger.debug("undeliverableThreshold="+undeliverableThreshold);
 		// .90 + .06 = .96
 		acceptedThreshold =
 			undeliverableThreshold + ((double) SMPPSim.getPercentageAccepted() / 100);
-		logger.finest("acceptedThreshold="+acceptedThreshold);
+		logger.debug("acceptedThreshold="+acceptedThreshold);
 		// .96 + .02 = .98
 		rejectedThreshold =
 			acceptedThreshold + ((double) SMPPSim.getPercentageRejected() / 100);
-		logger.finest("rejectedThreshold="+rejectedThreshold);
+		logger.debug("rejectedThreshold="+rejectedThreshold);
 		// .98 + .02 = 1.00
 	}
 	
@@ -84,16 +86,16 @@ public class LifeCycleManager {
 			stateChoice = Math.random();
 			if (stateChoice < deliveredThreshold) {
 				m.setState(PduConstants.DELIVERED);
-				logger.finest("State set to DELIVERED");
+				logger.debug("State set to DELIVERED");
 			} else if (stateChoice < undeliverableThreshold) {
 				m.setState(PduConstants.UNDELIVERABLE);
-				logger.finest("State set to UNDELIVERABLE");
+				logger.debug("State set to UNDELIVERABLE");
 			} else if (stateChoice < acceptedThreshold) {
 				m.setState(PduConstants.ACCEPTED);
-				logger.finest("State set to ACCEPTED");
+				logger.debug("State set to ACCEPTED");
 			} else {
 				m.setState(PduConstants.REJECTED);
-				logger.finest("State set to REJECTED");
+				logger.debug("State set to REJECTED");
 			}			
 		}
 		if (isTerminalState(m.getState())) {

@@ -25,17 +25,18 @@
  * $Header: /var/cvsroot/SMPPSim2/distribution/2.6.9/SMPPSim/src/java/com/seleniumsoftware/SMPPSim/util/LoggingUtilities.java,v 1.1 2012/07/24 14:49:00 martin Exp $
  ****************************************************************************/
 package com.seleniumsoftware.SMPPSim.util;
+import com.seleniumsoftware.SMPPSim.SMPPSim;
 import com.seleniumsoftware.SMPPSim.pdu.*;
 
 import java.util.StringTokenizer;
 import java.util.logging.*;
+import org.slf4j.LoggerFactory;
 
 
 public class LoggingUtilities {
 
-	private static Logger logger = Logger.getLogger("com.seleniumsoftware.smppsim");
-
-      
+//	private static Logger logger = Logger.getLogger("com.seleniumsoftware.smppsim");
+    private static org.slf4j.Logger logger = LoggerFactory.getLogger(LoggingUtilities.class);
 	public static void hexDump(String title, byte[] m, int l) 
         {
           //empty method, do nothing!

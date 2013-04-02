@@ -27,16 +27,17 @@
 
 package com.seleniumsoftware.SMPPSim;
 
-import java.io.OutputStream;
 import java.net.*;
-import java.util.logging.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 public class CallbackServerConnector implements Runnable {
 
 	private Smsc smsc = Smsc.getInstance();
 
-	private static Logger logger = Logger.getLogger("com.seleniumsoftware.smppsim");
-
+//	private static Logger logger = Logger.getLogger("com.seleniumsoftware.smppsim");
+    private static Logger logger = LoggerFactory.getLogger(CallbackServerConnector.class);
 	private Object mutex;
 
 	public CallbackServerConnector(Object mutex) {

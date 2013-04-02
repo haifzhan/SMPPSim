@@ -1,5 +1,6 @@
 package com.seleniumsoftware.examples;
 
+import com.seleniumsoftware.SMPPSim.SMPPSim;
 import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
@@ -7,11 +8,12 @@ import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.logging.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CallbackHandler implements Runnable {
 
-	private static Logger logger = Logger.getLogger("com.seleniumsoftware.examples");
+    private static org.slf4j.Logger logger = LoggerFactory.getLogger(CallbackHandler.class);
+//	private static Logger logger = Logger.getLogger("com.seleniumsoftware.examples");
 
 	ServerSocket ss;
 
@@ -50,16 +52,16 @@ public class CallbackHandler implements Runnable {
 					is = socket.getInputStream();
 					logger.info("CallbackHandler has accepted a connection");
 				} catch (Exception exception) {
-					logger.warning("Exception processing connection: "
+					logger.error("Exception processing connection: "
 							+ exception.getMessage());
-					logger.warning("Exception is of type: "
+					logger.error("Exception is of type: "
 							+ exception.getClass().getName());
 					exception.printStackTrace();
 					try {
 						socket.close();
 					} catch (Exception e) {
 						logger
-								.warning("Could not close socket following exception");
+								.error("Could not close socket following exception");
 						e.printStackTrace();
 					}
 				}
@@ -75,7 +77,7 @@ public class CallbackHandler implements Runnable {
 						receiver.sent(message);
 				} catch (SocketException se) {
 					logger
-							.info("Socket exception: probably connection closed by client without warning");
+							.info("Socket exception: probably connection closed by client without error");
 					se.printStackTrace();
 					isConnected = false;
 				} catch (Exception exception) {
@@ -85,22 +87,22 @@ public class CallbackHandler implements Runnable {
 						socket.close();
 					} catch (Exception e) {
 						logger
-								.warning("Could not close socket following exception");
+								.error("Could not close socket following exception");
 						e.printStackTrace();
 					}
 					isConnected = false;
 				}
 			} while (isConnected);
-			logger.finest("leaving callback handler main loop");
+			logger.debug("leaving callback handler main loop");
 		} while (running);
 	}
 
 	private int readPacketInto(InputStream is) throws IOException {
-		logger.finest("starting readPacketInto");
+		logger.debug("starting readPacketInto");
 		// Read the length of the incoming message...
 		int len;
 
-		logger.finest("reading message length");
+		logger.debug("reading message length");
 		messageLen[0] = (byte) is.read();
 		messageLen[1] = (byte) is.read();
 		messageLen[2] = (byte) is.read();
@@ -113,11 +115,11 @@ public class CallbackHandler implements Runnable {
 				| (getBytesAsInt(messageLen[3]));
 
 		if (messageLen[3] == -1) {
-			logger.warning("messageLen[3] == -1, throwing EOFException");
+			logger.error("messageLen[3] == -1, throwing EOFException");
 			throw new EOFException();
 		}
 
-		logger.finest("Reading " + len + " bytes");
+		logger.debug("Reading " + len + " bytes");
 
 		message = new byte[len];
 		message[0] = messageLen[0];
@@ -126,7 +128,7 @@ public class CallbackHandler implements Runnable {
 		message[3] = messageLen[3];
 		for (int i = 4; i < len; i++)
 			message[i] = (byte) is.read();
-		logger.finest("exiting readPacketInto");
+		logger.debug("exiting readPacketInto");
 		return len;
 	}
 

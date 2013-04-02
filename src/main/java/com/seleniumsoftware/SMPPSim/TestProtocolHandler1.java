@@ -30,11 +30,13 @@ package com.seleniumsoftware.SMPPSim;
 import com.seleniumsoftware.SMPPSim.pdu.*;
 import com.seleniumsoftware.SMPPSim.util.*;
 import java.util.*;
-import java.util.logging.*;
+import org.slf4j.LoggerFactory;
 
 public class TestProtocolHandler1 extends StandardProtocolHandler {
-	private static Logger logger = Logger.getLogger("com.seleniumsoftware.smppsim");
+//	private static Logger logger = Logger.getLogger("com.seleniumsoftware.smppsim");
 
+     private static org.slf4j.Logger logger = LoggerFactory.getLogger(TestProtocolHandler1.class);
+    
 	public TestProtocolHandler1() {
 	}
 
@@ -61,7 +63,7 @@ public class TestProtocolHandler1 extends StandardProtocolHandler {
 
 		// Validate session
 		if ((!session.isBound()) || (!session.isTransmitter())) {
-			logger.warning(
+			logger.debug(
 				"Invalid bind state. Must be bound as transmitter for this PDU");
 			wasInvalidBindState = true;
 			smsc.incSubmitSmERR();
@@ -93,7 +95,7 @@ public class TestProtocolHandler1 extends StandardProtocolHandler {
 			}
 		} catch (NumberFormatException nfe) {
 			// MSISDN treated as invalid
-			logger.warning(
+			logger.debug(
 				"'Invalid' MSISDN. This protocol handler treats non-numeric MSISDN as invalid for testing purposes");
 			smsc.incSubmitSmERR();
 			resp_message =
@@ -127,7 +129,7 @@ public class TestProtocolHandler1 extends StandardProtocolHandler {
 
 		// Validate session
 		if ((!session.isBound()) || (!session.isTransmitter())) {
-			logger.warning(
+			logger.debug(
 				"Invalid bind state. Must be bound as transmitter for this PDU");
 			wasInvalidBindState = true;
 			smsc.incSubmitMultiERR();
@@ -153,7 +155,7 @@ public class TestProtocolHandler1 extends StandardProtocolHandler {
 					long n = Long.parseLong(dest);
 				} catch (NumberFormatException nfe) {
 					// MSISDN treated as invalid
-					logger.warning(
+					logger.debug(
 						"'Invalid' MSISDN "
 							+ sme.getSme_ton()
 							+ ","
