@@ -152,13 +152,16 @@ public class SMPPSim
             showUsage();
             return;
         }
+
+        //Load logback.xml file
+        configure(args[0]);
+
         Properties props = new Properties();
-        // load the given properties
-        InputStream is = new FileInputStream(args[0]);
+        // load the given properties : smppsim.props
+        InputStream is = new FileInputStream(args[1]);
         props.load(is);
         initialise(props);
-        
-        configure(args[1]);
+
 
         showLegals();
         showConfiguration();
@@ -197,16 +200,22 @@ public class SMPPSim
         }
     }
 
+//    private static void showUsage()
+//    {
+//        System.out.println("Invalid or missing arguments:");
+//        System.out.println("Usage:");
+//        System.out.println("java -Djava.util.logging.config.file=<logging.properties file> com/seleniumsoftware/SMPPSim/SMPPSim <properties file>");
+//        System.out.println("");
+//        System.out.println("Example:");
+//        System.out.println("java -Djava.util.logging.config.file=conf\\logging.properties com/seleniumsoftware/SMPPSim/SMPPSim conf\\props.win");
+//        System.out.println("");
+//        System.out.println("Run terminated");
+//    }
     private static void showUsage()
     {
-        System.out.println("Invalid or missing arguments:");
-        System.out.println("Usage:");
-        System.out.println("java -Djava.util.logging.config.file=<logging.properties file> com/seleniumsoftware/SMPPSim/SMPPSim <properties file>");
-        System.out.println("");
-        System.out.println("Example:");
-        System.out.println("java -Djava.util.logging.config.file=conf\\logging.properties com/seleniumsoftware/SMPPSim/SMPPSim conf\\props.win");
-        System.out.println("");
-        System.out.println("Run terminated");
+        System.out.println("Invalide or missing arguments");
+        System.out.println("There are 2 arguments:  logback.xml file path and smppsim.props");
+        System.out.println("java -jar smppsim.jar conf/logback.xml conf/smppsim.props");
     }
 
     private static void initialise(Properties props) throws Exception
