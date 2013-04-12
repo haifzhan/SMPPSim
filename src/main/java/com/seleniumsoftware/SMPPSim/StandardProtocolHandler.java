@@ -1,3 +1,5 @@
+
+
 /****************************************************************************
  * StandardProtocolHandler.java
  *
@@ -413,7 +415,7 @@ public class StandardProtocolHandler {
                 
              //   logger.log(Level.INFO, "OP:{0}  CP:{1}  counter:{2}", new Object[] {smppmsg.getSource_addr(), smppmsg.getDestination_addr(), ++counter}); 
                 
-                
+             logger.info("OP: {}, CP:{}, MSG:{}, COUNTER: {}", new Object[]{smppmsg.getSource_addr(), smppmsg.getDestination_addr(), new String(smppmsg.getShort_message()), ++counter}); 
                 
                 
 		// now make the response object

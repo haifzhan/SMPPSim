@@ -17,6 +17,6 @@
         <!--value can change to TRACE/DEBUG-->
         <level value="INFO"/>
         <!--ref can change to FILE/CONSOLE -->
-        <appender-ref ref="FILE"/>
+        <appender-ref ref="CONSOLE"/>
     </root>
 </configuration>

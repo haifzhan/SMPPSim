@@ -13,3 +13,7 @@ java -jar smppsim.jar conf/logback.xml conf/smppsim.props
 How to change credentials?
 All credential information is in the conf/smppsim.props
 
+***attention***:
+the smpp-lib may not be downloaded, please get the maven dependency 
+in the conf/ folder and put it into your local maven repository:
+/.m2/respository/smpp/smpp-lib
