@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 public class StandardProtocolHandler {
     private volatile long counter = 0;
     
-    private static org.slf4j.Logger logger = LoggerFactory.getLogger(StandardProtocolHandler.class);
+    private org.slf4j.Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 //	 Logger logger = Logger.getLogger(this.getClass().getName());
 
 	Smsc smsc = Smsc.getInstance();
