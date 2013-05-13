@@ -143,6 +143,12 @@ public class SMPPSim
     private static short dlr_tlv_tag;
     private static short dlr_tlv_len;
     private static byte[] dlr_tlv_value;
+    
+    private static final int DELAY = 5000;
+    private static final int PERIOD = 5;
+    private static final int MINUTE = 6*1000;
+    
+    
 
     public static void main(String args[]) throws Exception
     {
@@ -152,6 +158,14 @@ public class SMPPSim
             showUsage();
             return;
         }
+        
+        Timer timer = new Timer();
+        timer.schedule(new Counter(), DELAY, PERIOD*MINUTE);
+//        timer.schedule(new Counter(), DELAY, 3000);
+        
+        
+        
+        
 
         //Load logback.xml file
         configure(args[0]);

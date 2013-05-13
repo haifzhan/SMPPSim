@@ -37,7 +37,7 @@ import org.apache.regexp.*;
 import org.slf4j.LoggerFactory;
 
 public class StandardProtocolHandler {
-    private volatile long counter = 0;
+//    private volatile long counter = 0;
     
     private org.slf4j.Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 //	 Logger logger = Logger.getLogger(this.getClass().getName());
@@ -411,12 +411,8 @@ public class StandardProtocolHandler {
 			LoggingUtilities.logDecodedPdu(smppmsg);
 		smsc.writeDecodedSme(smppmsg.toString());
 //		logger.info(" ");
-
-                
-             //   logger.log(Level.INFO, "OP:{0}  CP:{1}  counter:{2}", new Object[] {smppmsg.getSource_addr(), smppmsg.getDestination_addr(), ++counter}); 
-                
-             logger.info("OP: {}, CP:{}, MSG:{}, COUNTER: {}", new Object[]{smppmsg.getSource_addr(), smppmsg.getDestination_addr(), new String(smppmsg.getShort_message()), ++counter}); 
-                
+//             logger.info("OP: {}, CP:{}, MSG:{}, COUNTER: {}", new Object[]{smppmsg.getSource_addr(), smppmsg.getDestination_addr(), new String(smppmsg.getShort_message()), ++counter}); 
+                ++Counter.counter; // count the number of events that SMPPSim received 
                 
 		// now make the response object
 
