@@ -144,6 +144,10 @@ public class SMPPSim
     private static short dlr_tlv_len;
     private static byte[] dlr_tlv_value;
 
+    private static final long MINUTE = 1000*60;
+    private static final long DELAY = 5000;//5 seconds
+    private static final long PERIOD = 5;
+    
     public static void main(String args[]) throws Exception
     {
         System.out.println("SMPPSim is starting....");
@@ -162,9 +166,13 @@ public class SMPPSim
         props.load(is);
         initialise(props);
 
-
-        showLegals();
-        showConfiguration();
+        // display counter every X seconds
+        Timer timer = new Timer();
+        timer.schedule(new Counter(), DELAY, PERIOD*MINUTE);
+         
+         
+//        showLegals();
+//        showConfiguration();
 
 
         SMPPSim SMPPSim = new SMPPSim();
