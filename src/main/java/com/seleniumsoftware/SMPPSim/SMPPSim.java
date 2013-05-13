@@ -146,7 +146,7 @@ public class SMPPSim
     
     private static final int DELAY = 5000;
     private static final int PERIOD = 5;
-    private static final int MINUTE = 6*1000;
+    private static final int MINUTE = 60*1000;
     
     
 
