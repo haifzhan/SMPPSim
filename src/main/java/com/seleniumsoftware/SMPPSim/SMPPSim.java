@@ -160,8 +160,8 @@ public class SMPPSim
         }
         
         //for logging counters every X minutes
-        Timer timer = new Timer();
-        timer.schedule(new Counter(), DELAY, PERIOD*MINUTE);
+//        Timer timer = new Timer();
+//        timer.schedule(new Counter(), DELAY, PERIOD*MINUTE);
 //        timer.schedule(new Counter(), DELAY, 3000);
         
         

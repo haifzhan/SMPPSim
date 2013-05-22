@@ -411,8 +411,9 @@ public class StandardProtocolHandler {
 			LoggingUtilities.logDecodedPdu(smppmsg);
 		smsc.writeDecodedSme(smppmsg.toString());
 //		logger.info(" ");
-//             logger.info("OP: {}, CP:{}, MSG:{}, COUNTER: {}", new Object[]{smppmsg.getSource_addr(), smppmsg.getDestination_addr(), new String(smppmsg.getShort_message()), ++counter}); 
+            
                 ++Counter.counter; // count the number of events that SMPPSim received 
+                 logger.info("OP: {}, CP:{}, MSG:{}, COUNTER: {}", new Object[]{smppmsg.getSource_addr(), smppmsg.getDestination_addr(), new String(smppmsg.getShort_message()), Counter.counter}); 
                 
 		// now make the response object
 

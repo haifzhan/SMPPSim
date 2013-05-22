@@ -19,6 +19,6 @@ class Counter extends TimerTask
     
     public void run()
     {
-       logger.info("Counter: {}", counter);
+       logger.info("COUNTER: {}", counter);
     }
 }
