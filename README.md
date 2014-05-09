@@ -1,3 +1,5 @@
+This repo is for self learn. 
+
 SMPPSim official website tutorial:
 http://www.seleniumsoftware.com/user-guide.htm#quick
 
