@@ -180,3 +180,6 @@ DELIVERY_RECEIPT_TLV=1403/0A/34343132333435363738
 
 # MISC
 SMSCID=SMPPSim
+
+#Comma-Separated (regex-based) phone numbers to which any SMS sent would be marked as UNDELIVERED.
+UNDELIVERABLE_PHONE_NUMBERS=999999900[1-2]
