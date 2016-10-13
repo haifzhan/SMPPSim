@@ -118,6 +118,7 @@ public class SMPPSim
     private static String connectionHandlerClassName;
     private static String protocolHandlerClassName;
     private static String lifeCycleManagerClassName;
+    private static String[] undeliverable_phoneNumbers;
     // USSD
     private static boolean deliver_sm_includes_ussd_service_op = false;
     private static int[] messageTypes =
@@ -304,6 +305,7 @@ public class SMPPSim
         discardFromQueueAfter = getIntProperty(props, "DISCARD_FROM_QUEUE_AFTER", 60000);
         delayed_iqueue_period = 1000 * getIntProperty(props, "DELAYED_INBOUND_QUEUE_PROCESSING_PERIOD", 60);
         delayed_inbound_queue_max_attempts = getIntProperty(props, "DELAYED_INBOUND_QUEUE_MAX_ATTEMPTS", 10);
+        undeliverable_phoneNumbers = props.getProperty("UNDELIVERABLE_PHONE_NUMBERS").split(",");
 
         setCaptureSmeBinary(Boolean.valueOf(props.getProperty("CAPTURE_SME_BINARY")).booleanValue());
         setCaptureSmeBinaryToFile(props.getProperty("CAPTURE_SME_BINARY_TO_FILE"));
@@ -695,6 +697,14 @@ public class SMPPSim
     public static int[] getMessageTypes()
     {
         return messageTypes;
+    }
+
+    /**
+     * @return
+     */
+    public static String[] getUndeliverable_phoneNumbers() 
+    {
+        return undeliverable_phoneNumbers;
     }
 
     /**

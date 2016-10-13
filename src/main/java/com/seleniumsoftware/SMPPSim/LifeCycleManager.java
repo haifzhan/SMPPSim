@@ -78,25 +78,36 @@ public class LifeCycleManager {
 		if (isTerminalState(m.getState()))
 			return m;	
 		byte currentState = m.getState();
-		transition = Math.random();
-		if ((transition < transitionThreshold)
-			|| ((System.currentTimeMillis() - m.getSubmit_time())
-				> maxTimeEnroute)) {
-			// so which transition should it be?
-			stateChoice = Math.random();
-			if (stateChoice < deliveredThreshold) {
-				m.setState(PduConstants.DELIVERED);
-				logger.debug("State set to DELIVERED");
-			} else if (stateChoice < undeliverableThreshold) {
+		boolean stateSet = false;
+		for (String pattern : SMPPSim.getUndeliverable_phoneNumbers()) {
+			if (m.pdu.getDestination_addr().matches(pattern)) {
 				m.setState(PduConstants.UNDELIVERABLE);
-				logger.debug("State set to UNDELIVERABLE");
-			} else if (stateChoice < acceptedThreshold) {
-				m.setState(PduConstants.ACCEPTED);
-				logger.debug("State set to ACCEPTED");
-			} else {
-				m.setState(PduConstants.REJECTED);
-				logger.debug("State set to REJECTED");
-			}			
+				logger.debug("State set to UNDELIVERABLE due to undeliverable pattern match.");
+				stateSet = true;
+				break;
+			}
+		}
+		if (!stateSet) {
+			transition = Math.random();
+			if ((transition < transitionThreshold)
+				|| ((System.currentTimeMillis() - m.getSubmit_time())
+					> maxTimeEnroute)) {
+				// so which transition should it be?
+				stateChoice = Math.random();
+				if (stateChoice < deliveredThreshold) {
+					m.setState(PduConstants.DELIVERED);
+					logger.debug("State set to DELIVERED");
+				} else if (stateChoice < undeliverableThreshold) {
+					m.setState(PduConstants.UNDELIVERABLE);
+					logger.debug("State set to UNDELIVERABLE");
+				} else if (stateChoice < acceptedThreshold) {
+					m.setState(PduConstants.ACCEPTED);
+					logger.debug("State set to ACCEPTED");
+				} else {
+					m.setState(PduConstants.REJECTED);
+					logger.debug("State set to REJECTED");
+				}			
+			}
 		}
 		if (isTerminalState(m.getState())) {
 			m.setFinal_time(System.currentTimeMillis());
